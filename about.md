@@ -1,10 +1,16 @@
 ---
 layout: post
-title: About
+title: About_Me
 date: 2013-09-10 21:48
 ---
 
+Over 10 years experience in IT infrastructure, Unix/Linux system implementation, capacity analysis, performance tuning,KVM /VMware system implementation
 
-这是我的个人博客, 记录技术、生活等方面的点点滴滴。
-欢迎业内朋友多多交流。
+ I work as team leader Unix/Storage since 2011 in IBM GDC.
 
++ Automatic system managment(Puppet/Perl/shell)
++ Enterprise monitor solution(Nagios+Cacti)
++ Enterprise Unix patch solution
++ Enterprise backup and recovery solution
++ Unix/Linux SUDO/SSH best practice
++ My favorite: bascketball /Swimming
