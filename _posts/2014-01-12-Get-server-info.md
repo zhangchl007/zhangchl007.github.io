@@ -1,6 +1,6 @@
 ---
 layout: post
-title: collect server information/Get-server-info
+title: Get server information/Get-server-info
 tag: perl
 ---
 <pre><code>
