@@ -104,7 +104,7 @@ Status
 >       Please refer to the following link: 3011562
 >                        
 >       The actual value >  The default value
->  The default value of maxdirsize to on NAS is 45875   
+>    The default value of maxdirsize to on NAS is 45875   
    ![the default maxdirsize](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/maxdirsize01.png)
 
 >    The actual value of maxdirsize to on NAS is 45876
