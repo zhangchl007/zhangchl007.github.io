@@ -105,10 +105,10 @@ Because oracle audit log couldn't be created under the defined path: /oracle/app
                        
       The actual value >  The default value
  The default value of maxdirsize to on NAS is 45875   
-   ![the default maxdirsize](https://github.com/zhangchl007/zhangchl007.github.io/blob/master/_image/maxdirsize01.png)
+   ![the default maxdirsize](../blob/master/_image/maxdirsize01.png?raw=true)
 
     The actual value of maxdirsize to on NAS is 45876
-   ![The actual value of maxdirsize](https://github.com/zhangchl007/zhangchl007.github.io/blob/master/_image/maxdirsize02.png)
+   ![The actual value of maxdirsize](../blob/master/_image/maxdirsize02.png?raw=true)
      
 
 
