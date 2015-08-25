@@ -11,6 +11,7 @@ Over 10 years experience in IT infrastructure, Unix/Linux system implementation,
 + Automatic system managment(Puppet/Perl/shell)
 + Enterprise monitor solution(Nagios+Cacti)
 + Enterprise Unix patch solution
++ Enterprise Storage solution
 + Enterprise backup and recovery solution
 + Unix/Linux SUDO/SSH best practice
 + My favorite: bascketball /Swimming
