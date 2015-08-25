@@ -4,7 +4,7 @@ title: Get server information/Get-server-info
 tag: perl
 ---
 <pre><code>
-#!/usr/bin/perl -w
+\#!/usr/bin/perl -w
 use strict;
 use Term::ANSIColor;
 my ($cpu,$count,$cpu_core,$mem,$version,@a,@b,%h);
@@ -16,16 +16,16 @@ if ($user_name ne "root") {
       print color 'reset';
       exit(1);
 }
-#OS Version
+\#OS Version
 open (FHV,"<","/etc/issue") or die "coudn't open /etc/issue$!\n";
 while (<FHV>) {
        $version=$_ if $_=~/Linux/;
        chomp($version);
 } 
 close FHV;
-#CPU info###
+\#CPU info\#\#\#
 open (FHC,"<","/proc/cpuinfo") or die "coudn't open /proc/cpuinfo$!\n";
-#match 
+\#match 
 while (<FHC>){
    if ($_=~/model\s+name/){
       s/model\s+name\s:\s+(.*)/$1/g;
@@ -48,7 +48,7 @@ while (<FHC>){
       
 }
 close FHC;
-#Memory info
+\#Memory info
 open (FHM,"<","/proc/meminfo") or die "coudn't open /proc/meminfo$!\n";
 while (<FHM>){
    if ($_=~/MemTotal:/){
@@ -57,23 +57,23 @@ while (<FHM>){
       }
 }
 close FHM;
-#put scalar to array and find the max valve of physical id.
+\#put scalar to array and find the max valve of physical id.
 my $phynum=shift@a;
   foreach(@a){
      if ($_>$phynum){
      $phynum=$_;
   }
 }
-#Disk info
+\#Disk info
 open (FHD,"<","/proc/partitions") or die "The /proc/partitions couldn't be openned$!\n";
 while (<FHD>) {
      $h{$2}=int($1/(1000*1000)+1) if $_=~/\s+\d+\s+\d+\s+(\d+)\s+([a-z]{3}\b)/;
 }
 close FHD; 
-####Server summary info###
+\#\#\#\#Server summary info\#\#\#
 open (FHS,"-|","/usr/sbin/dmidecode") or die "dmidecode permission denied$!\n";
 while (<FHS>){
-       #if ($_=~/System\s+Information/../Base\s+Board\s+Information/){
+       \#if ($_=~/System\s+Information/../Base\s+Board\s+Information/){
        if ($_=~/System\s+Information/../^$/){
             push @b,"The Manufacturer is $1\n" if $_=~/\s+Manufacturer:\s+(.*)/;
             push @b,"The Product Number is $1\n" if $_=~/\s+Product\s+Name:\s+(.*)/;
@@ -82,7 +82,7 @@ while (<FHS>){
  }
 }
 close FHS;
-#output
+\#output
 if (defined($phynum)){
       &Prt_info($cpu,$phynum+1,$cpu_core,$count,$mem,$version,\@b,\%h);
  }
