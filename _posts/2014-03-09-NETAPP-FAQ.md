@@ -1,7 +1,6 @@
 ---
 layout: post
-title: NETAPP-FAQ
+title: NETAPP-FAQ List
 tag: NetAPP
 ---
-			Root Cause Analysis Report
 <a href="https://kb.netapp.com/support/index?page=content&channel=FAQ">NETAPP-FAQ</a>
