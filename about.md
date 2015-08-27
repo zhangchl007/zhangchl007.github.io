@@ -15,3 +15,4 @@ Over 10 years experience in IT infrastructure, Unix/Linux system implementation,
 + Enterprise backup and recovery solution
 + Unix/Linux SUDO/SSH best practice
 + My favorite: bascketball /Swimming
++ openstack learning progress

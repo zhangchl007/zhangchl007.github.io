@@ -1,10 +1,10 @@
 ---
 layout: post
-title: LVS and Heardbeat basic
+title: Intermediate-Perl-2nd-learning
 tag: Linux
 ---
 
-http://perldoc.perl.org/functions/do.html
+<a href="http://perldoc.perl.org/functions/do.html">perldoc/function/do</a>
 
 do
 
