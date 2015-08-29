@@ -4,7 +4,7 @@ title: Import data to MySQL
 tag: perl
 ---
 <pre><code>
-#!/usr/bin/perl
+\#!/usr/bin/perl
 # ====================================
 # Author:         Ryan Li
 # FILE NAME:         nagios_report.pl
