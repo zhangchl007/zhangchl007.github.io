@@ -5,7 +5,7 @@ tag: shell
 ---
 
 <pre><code>
-#!/bin/sh
+\#!/bin/sh
 
 \### The script will archive the log files before today  according to mtime of files###
 \###except the files are using under the specifed directory###
