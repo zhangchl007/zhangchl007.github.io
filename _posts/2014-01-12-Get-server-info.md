@@ -93,7 +93,7 @@ else {
       &Prt_info($cpu,0,0,$count,$mem,$version,\@b,\%h);
   }
 sub Prt_info {
-     my($a,$b,$c,$d,$e,$f,$ref_array01,$ref_hash01)=@_;
+     my($a,$b,$c,$d,$e,$f,$ref_array01,$ref_hash01)=@\_;
      print color 'bold yellow';
      print "--------------The Server Summary----------------------\n";
      print "The OS Version is $f\n";
