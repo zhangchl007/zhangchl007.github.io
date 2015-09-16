@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Docker持续部署图文详解 | 高效运维最佳实践06 
+title:  Openstack learning series
 tag: 
 ---
 好好学习
