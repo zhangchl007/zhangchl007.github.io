@@ -5,7 +5,7 @@ tag: Docker
 ---
 
 /etc/init/docker.conf It's a script to start docker server daemon. Please the code below
-
+<pre><code>
 description "Docker daemon"
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [!2345]
@@ -63,7 +63,7 @@ post-start script
 		echo "/var/run/docker.sock is up"
 	fi
 end script
-
+<\pre><\code>
 /etc/apt/sources.list.d/docker.list #It's defined docker package source 
 /etc/systemd/system/sockets.target.wants/docker.socket #docker conf for Systemd
 /etc/systemd/system/multi-user.target.wants/docker.service #docker conf for Systemd
