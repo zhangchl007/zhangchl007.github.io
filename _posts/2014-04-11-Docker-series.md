@@ -63,7 +63,7 @@ post-start script
 		echo "/var/run/docker.sock is up"
 	fi
 end script
-<\pre><\code>
+</pre></code>
 /etc/apt/sources.list.d/docker.list #It's defined docker package source 
 /etc/systemd/system/sockets.target.wants/docker.socket #docker conf for Systemd
 /etc/systemd/system/multi-user.target.wants/docker.service #docker conf for Systemd
