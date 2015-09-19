@@ -51,8 +51,8 @@ script
 	exec "$DOCKER" daemon $DOCKER_OPTS
 end script
 
-\# Don't emit "started" event until docker.sock is ready.
-\# See https://github.com/docker/docker/issues/6647
+ \# Don't emit "started" event until docker.sock is ready.
+ \# See https://github.com/docker/docker/issues/6647
 post-start script
 	DOCKER_OPTS=
 	if [ -f /etc/default/$UPSTART_JOB ]; then
