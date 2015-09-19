@@ -65,12 +65,19 @@ post-start script
 end script
 </pre></code>
 /etc/apt/sources.list.d/docker.list #It's defined docker package source 
+
 /etc/systemd/system/sockets.target.wants/docker.socket #docker conf for Systemd
+
 /etc/systemd/system/multi-user.target.wants/docker.service #docker conf for Systemd
+
 /etc/apparmor.d/cache/docker #component
+
 /etc/apparmor.d/docker       #component
+
 /etc/default/docker          #SysVinit configuration file
+
 /etc/init.d/docker           #It is included by /etc/init/docker.conf
+
 /etc/bash_completion.d/docker #bash completion file for core docker commands
 
 <a href="https://blog.linuxeye.com/400.html">systemd详解</a>
