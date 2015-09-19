@@ -6,8 +6,6 @@ tag: Docker
 
 /etc/init/docker.conf \#It's a script to start docker server daemon. Please the code below
 
-<pre><code>
-
 description "Docker daemon"
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [!2345]
@@ -40,7 +38,6 @@ pre-start script
 		done
 	)
 end script
-
 script
 	\# modify these in /etc/default/$UPSTART_JOB (/etc/default/docker)
 	DOCKER=/usr/bin/$UPSTART_JOB
@@ -68,7 +65,6 @@ post-start script
 	fi
 end script
 
-<\pre><\code>
 
 /etc/apt/sources.list.d/docker.list \# It's defined docker package source 
 
@@ -82,7 +78,6 @@ end script
 
 /etc/init.d/docker           \#It is included by /etc/init/docker.conf
 
-<pre><code>
 
 \#!/bin/sh
 set -e
@@ -131,7 +126,7 @@ if [ ! -x $DOCKER ]; then
 fi
 
 check_init() {
-	 \# see also init_is_upstart in /lib/lsb/init-functions (which isn't available in Ubuntu 12.04, or we'd use it directly)
+	 # see also init_is_upstart in /lib/lsb/init-functions (which isn't available in Ubuntu 12.04, or we'd use it directly)
 	 if [ -x /sbin/initctl ] && /sbin/initctl version 2>/dev/null | grep -q upstart; then        
                 log_failure_msg "$DOCKER_DESC is managed via upstart, try using service $BASE $1"
                 exit 1
@@ -233,8 +228,6 @@ case "$1" in
 		exit 1
 		;;
 esac
-
-<\pre><\code>
 
 /etc/bash_completion.d/docker \## bash completion file for core docker commands
 
