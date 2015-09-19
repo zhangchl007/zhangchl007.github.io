@@ -7,8 +7,8 @@ tag: Docker
 /etc/init/docker.conf \#It's a script to start docker server daemon. Please the code below
 
 <pre><code>
-description "Docker daemon"
 
+description "Docker daemon"
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [!2345]
 limit nofile 524288 1048576
@@ -80,8 +80,10 @@ end script
 /etc/apparmor.d/docker       \#component
 /etc/default/docker          \#SysVinit configuration file
 
-/etc/init.d/docker           \#It is included by /etc/init/docker.conf 
+/etc/init.d/docker           \#It is included by /etc/init/docker.conf
+
 <pre><code>
+
 \#!/bin/sh
 set -e
 
@@ -231,6 +233,7 @@ case "$1" in
 		exit 1
 		;;
 esac
+
 <\pre><\code>
 
 /etc/bash_completion.d/docker \## bash completion file for core docker commands
