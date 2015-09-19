@@ -4,7 +4,7 @@ title: Docker-Self-Learning01
 tag: Docker
 ---
 
-/etc/init/docker.conf \#It's a script to start docker server daemon. Please the code below
+/etc/init/docker.conf \# It's a script to start docker server daemon. Please the code below
 
 <pre><code>
 description "Docker daemon"
@@ -12,13 +12,10 @@ start on (local-filesystems and net-device-up IFACE!=lo)
 stop on runlevel [!2345]
 limit nofile 524288 1048576
 limit nproc 524288 1048576
-
 respawn
-
 kill timeout 20
-
 pre-start script
-	\# see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
+	\#see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
 	if grep -v '^\#' /etc/fstab | grep -q cgroup \
 		|| [ ! -e /proc/cgroups ] \
 		|| [ ! -d /sys/fs/cgroup ]; then
@@ -41,7 +38,7 @@ pre-start script
 end script
 
 script
-	\# modify these in /etc/default/$UPSTART_JOB (/etc/default/docker)
+	\#modify these in /etc/default/$UPSTART_JOB (/etc/default/docker)
 	DOCKER=/usr/bin/$UPSTART_JOB
 	DOCKER_OPTS=
 	if [ -f /etc/default/$UPSTART_JOB ]; then
@@ -49,8 +46,9 @@ script
 	fi
 	exec "$DOCKER" daemon $DOCKER_OPTS
 end script
- \# Don't emit "started" event until docker.sock is ready.
- \# See https://github.com/docker/docker/issues/6647
+
+\#Don't emit "started" event until docker.sock is ready.
+\# See https://github.com/docker/docker/issues/6647
 
 post-start script
 	DOCKER_OPTS=
@@ -66,9 +64,10 @@ post-start script
 		echo "/var/run/docker.sock is up"
 	fi
 end script
+
 <\pre><\code>
 
-/etc/apt/sources.list.d/docker.list \#It's defined docker package source 
+/etc/apt/sources.list.d/docker.list \# It's defined docker package source 
 
 /etc/systemd/system/sockets.target.wants/docker.socket \#docker conf for Systemd
 
@@ -81,13 +80,12 @@ end script
 /etc/init.d/docker           \#It is included by /etc/init/docker.conf
 
 <pre><code>
-
 cat  /etc/init.d/docker
 
 \#!/bin/sh
 set -e
 
-\### BEGIN INIT INFO
+\#\#\# BEGIN INIT INFO
 \# Provides:           docker
 \# Required-Start:     $syslog $remote_fs
 \# Required-Stop:      $syslog $remote_fs
@@ -101,7 +99,7 @@ set -e
 \#  self-sufficient containers from any application. The same container that a
 \#  developer builds and tests on a laptop can run at scale, in production, on
 \#  VMs, bare metal, OpenStack clusters, public clouds and more.
-\### END INIT INFO
+\#\#\# END INIT INFO
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
@@ -234,8 +232,6 @@ case "$1" in
 		exit 1
 		;;
 esac
-
 <\pre><\code>
-
 /etc/bash_completion.d/docker \## bash completion file for core docker commands
 <a href="https://blog.linuxeye.com/400.html">systemd详解</a>
