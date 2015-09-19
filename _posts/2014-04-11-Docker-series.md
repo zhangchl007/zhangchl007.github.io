@@ -19,8 +19,8 @@ respawn
 kill timeout 20
 
 pre-start script
-	# see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
-	if grep -v '^#' /etc/fstab | grep -q cgroup \
+	\# see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
+	if grep -v '^\#' /etc/fstab | grep -q cgroup \
 		|| [ ! -e /proc/cgroups ] \
 		|| [ ! -d /sys/fs/cgroup ]; then
 		exit 0
@@ -30,7 +30,7 @@ pre-start script
 	fi
 	(
 		cd /sys/fs/cgroup
-		for sys in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+		for sys in $(awk '!/^\#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
 			mkdir -p $sys
 			if ! mountpoint -q $sys; then
 				if ! mount -n -t cgroup -o $sys cgroup $sys; then
@@ -42,7 +42,7 @@ pre-start script
 end script
 
 script
-	# modify these in /etc/default/$UPSTART_JOB (/etc/default/docker)
+	\# modify these in /etc/default/$UPSTART_JOB (/etc/default/docker)
 	DOCKER=/usr/bin/$UPSTART_JOB
 	DOCKER_OPTS=
 	if [ -f /etc/default/$UPSTART_JOB ]; then
@@ -51,8 +51,8 @@ script
 	exec "$DOCKER" daemon $DOCKER_OPTS
 end script
 
-# Don't emit "started" event until docker.sock is ready.
-# See https://github.com/docker/docker/issues/6647
+\# Don't emit "started" event until docker.sock is ready.
+\# See https://github.com/docker/docker/issues/6647
 post-start script
 	DOCKER_OPTS=
 	if [ -f /etc/default/$UPSTART_JOB ]; then
@@ -72,9 +72,9 @@ end script
 
 /etc/apt/sources.list.d/docker.list \# It's defined docker package source 
 
-/etc/systemd/system/sockets.target.wants/docker.socket \#docker conf for Systemd
+/etc/systemd/system/sockets.target.wants/docker.socket \\#docker conf for Systemd
 
-/etc/systemd/system/multi-user.target.wants/docker.service \#docker conf for Systemd
+/etc/systemd/system/multi-user.target.wants/docker.service \\#docker conf for Systemd
 
 /etc/apparmor.d/cache/docker \#component
 /etc/apparmor.d/docker       \#component
@@ -82,54 +82,54 @@ end script
 
 /etc/init.d/docker           \#It is included by /etc/init/docker.conf 
 <pre><code>
-#!/bin/sh
+\#!/bin/sh
 set -e
 
-### BEGIN INIT INFO
-# Provides:           docker
-# Required-Start:     $syslog $remote_fs
-# Required-Stop:      $syslog $remote_fs
-# Should-Start:       cgroupfs-mount cgroup-lite
-# Should-Stop:        cgroupfs-mount cgroup-lite
-# Default-Start:      2 3 4 5
-# Default-Stop:       0 1 6
-# Short-Description:  Create lightweight, portable, self-sufficient containers.
-# Description:
-#  Docker is an open-source project to easily create lightweight, portable,
-#  self-sufficient containers from any application. The same container that a
-#  developer builds and tests on a laptop can run at scale, in production, on
-#  VMs, bare metal, OpenStack clusters, public clouds and more.
-### END INIT INFO
+\### BEGIN INIT INFO
+\# Provides:           docker
+\# Required-Start:     $syslog $remote_fs
+\# Required-Stop:      $syslog $remote_fs
+\# Should-Start:       cgroupfs-mount cgroup-lite
+\# Should-Stop:        cgroupfs-mount cgroup-lite
+\# Default-Start:      2 3 4 5
+\# Default-Stop:       0 1 6
+\# Short-Description:  Create lightweight, portable, self-sufficient containers.
+\# Description:
+\#  Docker is an open-source project to easily create lightweight, portable,
+\#  self-sufficient containers from any application. The same container that a
+\#  developer builds and tests on a laptop can run at scale, in production, on
+\#  VMs, bare metal, OpenStack clusters, public clouds and more.
+\### END INIT INFO
 
 export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 BASE=$(basename $0)
 
-# modify these in /etc/default/$BASE (/etc/default/docker)
+\# modify these in /etc/default/$BASE (/etc/default/docker)
 DOCKER=/usr/bin/$BASE
-# This is the pid file managed by docker itself
+\# This is the pid file managed by docker itself
 DOCKER_PIDFILE=/var/run/$BASE.pid
-# This is the pid file created/managed by start-stop-daemon
+\# This is the pid file created/managed by start-stop-daemon
 DOCKER_SSD_PIDFILE=/var/run/$BASE-ssd.pid
 DOCKER_LOGFILE=/var/log/$BASE.log
 DOCKER_OPTS=
 DOCKER_DESC="Docker"
 
-# Get lsb functions
+\# Get lsb functions
 . /lib/lsb/init-functions
 
 if [ -f /etc/default/$BASE ]; then
 	. /etc/default/$BASE
 fi
 
-# Check docker is present
+\# Check docker is present
 if [ ! -x $DOCKER ]; then
 	log_failure_msg "$DOCKER not present or not executable"
 	exit 1
 fi
 
 check_init() {
-	 # see also init_is_upstart in /lib/lsb/init-functions (which isn't available in Ubuntu 12.04, or we'd use it directly)
+	 \# see also init_is_upstart in /lib/lsb/init-functions (which isn't available in Ubuntu 12.04, or we'd use it directly)
 	 if [ -x /sbin/initctl ] && /sbin/initctl version 2>/dev/null | grep -q upstart; then        
                 log_failure_msg "$DOCKER_DESC is managed via upstart, try using service $BASE $1"
                 exit 1
@@ -144,8 +144,8 @@ fail_unless_root() {
 }
 
 cgroupfs_mount() {
-	# see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
-	if grep -v '^#' /etc/fstab | grep -q cgroup \
+	\# see also https://github.com/tianon/cgroupfs-mount/blob/master/cgroupfs-mount
+	if grep -v '^\#' /etc/fstab | grep -q cgroup \
 		|| [ ! -e /proc/cgroups ] \
 		|| [ ! -d /sys/fs/cgroup ]; then
 		return
@@ -155,7 +155,7 @@ cgroupfs_mount() {
 	fi
 	(
 		cd /sys/fs/cgroup
-		for sys in $(awk '!/^#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
+		for sys in $(awk '!/^\#/ { if ($4 == 1) print $1 }' /proc/cgroups); do
 			mkdir -p $sys
 			if ! mountpoint -q $sys; then
 				if ! mount -n -t cgroup -o $sys cgroup $sys; then
