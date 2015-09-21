@@ -39,7 +39,6 @@ total 0
 
 </pre></code>
 
-/etc/apt/sources.list.d/docker.list #It's defined docker package source 
-
 <a href="http://blog.thoward37.me/articles/where-are-docker-images-stored/">Where are Docker images stored?</a>
+
 <a href="http://www.infoq.com/cn/articles/docker-source-code-analysis-part11?utm_source=tuicool">Docker源码分析（十一）：镜像存储</a>
