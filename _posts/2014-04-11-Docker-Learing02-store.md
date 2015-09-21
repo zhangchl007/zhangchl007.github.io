@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: Docker-images-learning02/whereis are docker images?
 tag: Docker
 ---
