@@ -19,7 +19,7 @@ root@8e3e5ec72ab4:/# $ ls
 $ 
 
  detatch from the container without stopping it press CTRL+P followed by CTRL+Q.
-pre></code>
+<pre></code>
 
 
 <a href="http://dockerpool.com/static/books/docker_practice/container/enter.html">进入容器</a>
