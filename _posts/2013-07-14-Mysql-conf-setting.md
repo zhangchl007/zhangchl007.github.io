@@ -385,3 +385,5 @@ tag: mysql
 #performance_schema_max_thread_instances=			#The maximum number of instrumented thread objects
 
 <\pre><\code>
+
+<a href="http://www.ha97.com/4110.html"MySQL my.cnf参数配置优化详解></a>
