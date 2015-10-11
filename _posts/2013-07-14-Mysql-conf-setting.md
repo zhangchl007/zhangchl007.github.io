@@ -6,6 +6,7 @@ tag: mysql
 
 ***以下开始为配置文件模板
 <pre><code>
+
 [mysqld]
 #**********************Server**************************
 #******server start related
@@ -382,4 +383,5 @@ tag: mysql
 #performance_schema_max_table_instances=			#The maximum number of instrumented table objects
 #performance_schema_max_thread_classes=				#Default 50;The maximum number of thread instruments
 #performance_schema_max_thread_instances=			#The maximum number of instrumented thread objects
+
 <\pre><\code>
