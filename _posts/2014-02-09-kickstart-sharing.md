@@ -181,4 +181,6 @@ $SNIPPET('kickstart_done')
 
 </pre></code> 
 
-<a href="http://pan.baidu.com/s/1kTleKuF">code</a>
+<a href="http://pan.baidu.com/s/1kTleKuF">RHEL6</a>
+<a href="http://pan.baidu.com/s/1sjABagP">RHEL7</a>
+
