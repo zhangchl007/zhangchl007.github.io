@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux Infrastructure Automation
+title: RHEL6 kickstart template file 
 tag: Infra automation
 ---
 
