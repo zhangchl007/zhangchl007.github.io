@@ -8,51 +8,51 @@ tag: Infra automation
 
 <pre><code>
 
-\#platform=x86, AMD64, or Intel EM64T
-\# System authorization information
+#platform=x86, AMD64, or Intel EM64T
+# System authorization information
 auth  --useshadow  --enablemd5
-\# System bootloader configuration
+# System bootloader configuration
 bootloader --location=mbr
-\# Partition clearing information
+# Partition clearing information
 clearpart --all --initlabel
-\# Use text mode install
+# Use text mode install
 text
-\#skip key
+#skip key
 key --skip
-\# Firewall configuration
+# Firewall configuration
 firewall --disabled
-\# Run the Setup Agent on first boot
+# Run the Setup Agent on first boot
 firstboot --disable
-\# System keyboard
+# System keyboard
 keyboard us
-\# System language
+# System language
 lang en_US
-\# Use network installation
+# Use network installation
 url --url=$tree
-\# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
 $yum_repo_stanza
-\# Network information
+# Network information
 $SNIPPET('network_config')
-\# Reboot after installation
+# Reboot after installation
 reboot
 
-\#Root password
+#Root password
 rootpw --iscrypted $default_password_crypted
-\# SELinux configuration
+# SELinux configuration
 selinux --disabled
-\# Do not configure the X Window System
-\#skipx
-\# System timezone
+# Do not configure the X Window System
+#skipx
+# System timezone
 timezone Asia/Shanghai
-\# Install OS instead of upgrade
+# Install OS instead of upgrade
 install
-\# Clear the Master Boot Record
+# Clear the Master Boot Record
 zerombr
-\# Allow anaconda to partition the system as needed
-\#autopart
+# Allow anaconda to partition the system as needed
+#autopart
 clearpart --all --initlabel
 part /boot --fstype ext3 --size=256
-\#part pv.01 --size=1 --grow --ondisk=sda
+#part pv.01 --size=1 --grow --ondisk=sda
 part pv.01 --size=1 --grow
 volgroup rootvg pv.01
 logvol  /  --vgname=rootvg  --size=2048  --name=lv_root
@@ -66,7 +66,7 @@ logvol  /tmp  --vgname=rootvg  --size=2048  --name=lv_tmp
 $SNIPPET('log_ks_pre')
 $SNIPPET('kickstart_start')
 $SNIPPET('pre_install_network_config')
-\# Enable installation monitoring
+# Enable installation monitoring
 $SNIPPET('pre_anamon')
 
 %packages
@@ -80,9 +80,9 @@ $SNIPPET('puppet_install_if_enabled')
 
 %post --log=/root/mypostlog
 $SNIPPET('log_ks_post')
-\# Start yum configuration
+# Start yum configuration
 $yum_config_stanza
-\# End yum configuration
+# End yum configuration
 $SNIPPET('post_install_kernel_options')
 $SNIPPET('post_install_network_config')
 $SNIPPET('func_register_if_enabled')
@@ -91,9 +91,9 @@ $SNIPPET('download_config_files')
 $SNIPPET('koan_environment')
 $SNIPPET('redhat_register')
 $SNIPPET('cobbler_register')
-\# Enable post-install boot notification
+# Enable post-install boot notification
 $SNIPPET('post_anamon')
-\#ID creation\#\#\#\#\#
+#ID creation#####
 groupadd ibm_sa
 groupadd szidadmin
 groupadd ibm_dba
@@ -102,13 +102,13 @@ useradd -g ibm_sa xxxxx
 useradd -g ibm_sa xxxxx
 useradd -g ibm_sa xxxxx
 
-\#id labelling
+#id labelling
 mkdir /mnt/temp
 mount -o nolock 10.68.32.197:/nfs/share /mnt/temp
 open -s -w -- /mnt/temp/labelling.sh
-\#Health checking/system hardening
+#Health checking/system hardening
 open -s -w -- /mnt/temp/HC_fixing.sh
-\#SUDO second logging
+#SUDO second logging
 mkdir -p /usr/local/scripts
 cp -p /mnt/temp/clean_history.ksh /usr/local/scripts
 cp -p /mnt/temp/mk_history.sh    /usr/local/scripts
@@ -118,17 +118,17 @@ mkdir -p /var/log/history
 chmod 1777 /var/log/history
 echo ". /usr/local/scripts/mk_history.sh" >> /etc/profile
 cat <<EOF >/tmp/crontab.root
-\#\#\# Housekeep history \#\#\#
+### Housekeep history ###
 0 0 * * 0 /usr/local/scripts/clean_history.ksh > /tmp/clean_history.log 2>&1 >/dev/null
 EOF
 crontab /tmp/crontab.root
 rm /tmp/crontab.root
-\#PAM seting
+#PAM seting
 cp /etc/pam.d/system-auth-ac /etc/pam.d/system-auth-ac.bak
 cat /dev/null > /etc/pam.d/system-auth-ac
-                echo '\#%PAM-1.0
-\# This file is auto-generated.
-\# User changes will be destroyed the next time authconfig is run.
+                echo '#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
 auth        required      pam_env.so
 auth        required      pam_tally.so deny=5 onerr=fail no_magic_root
 auth        sufficient    pam_unix.so likeauth nullok
@@ -145,12 +145,12 @@ password    required      pam_deny.so
 
 session     required      pam_limits.so
 session     required      pam_unix.so' >>/etc/pam.d/system-auth-ac
-\#\#\#sudo deployment\#\#\#\#\#\#\#\#
+###sudo deployment########
 rpm -Uvh http://10.75.1.199/mrepo/rhel5s-x86_64/RPMS.updates/sudo-1.8.13-1.el5.x86_64.rpm
 cp  /mnt/temp/sudoers.sampleconfig.8.4 /etc/sudoers
 cp  /mnt/temp/sudoers.d/*_GLB /etc/sudoers.d
-\#ntp time sync configuration
-sed -i 's/^server/\#server/g' /etc/ntp.conf
+#ntp time sync configuration
+sed -i 's/^server/#server/g' /etc/ntp.conf
 echo "server miatime.mia.michelin.com" >> /etc/ntp.conf
 echo "server onctime.onc.michelin.com" >> /etc/ntp.conf
 /sbin/chkconfig --level 345 ntpd on
@@ -158,26 +158,27 @@ if [ -f /etc/init.d/ntpd ]; then
         /etc/init.d/ntpd stop
         /etc/init.d/ntpd start
 fi
-\#BNU message
+#BNU message
 echo '                                                                    ' >> /etc/motd
 echo '***   Access to and use of this system is strictly restricted    ***' >> /etc/motd
 echo '***             to explicitly authorized persons.                ***' >> /etc/motd
 echo '***     Any violation is prohibited and will be prosecuted.      ***' >> /etc/motd
 echo '                                                                    ' >> /etc/motd
-\#\#\#\#yum repository\#\#\#\#\#\#
+####yum repository######
 cp /mnt/temp/rhel6s.repo /etc/yum.repos.d/
-\#\#\#\#\#\#\#patch update \#\#\#\#\#\#\#
+#######patch update #######
 /usr/bin/yum update -y
-\#VMware tool installation
+#VMware tool installation
 open -s -w -- /mnt/temp/vmware-tools-distrib/vmware-install.pl --default EULA_AGREED=yes
-\#IBM standard tool installation
+#IBM standard tool installation
 open -s -w -- /mnt/temp/install_x64.sh
 open -s -w -- /mnt/temp/ITM_Inst_upgd.sh  /mnt/temp/itm62222.agent /mnt/temp/6.2.2-TIV-ITM_TMV-Agents-FP0007
 umount /mnt/temp
 
-\# Start final steps
+# Start final steps
 $SNIPPET('kickstart_done')
-\# End final steps
+# End final steps
+
 
 </pre></code> 
 
