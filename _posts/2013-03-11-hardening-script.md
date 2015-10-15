@@ -1,6 +1,6 @@
 ---
 layout: post
-title:RHEL6 system hardening script
+title: RHEL6 system hardening script
 tag: shell
 ---
 We wrote a script to perform RHEL6 Health checking, I will make it better if I have more time in the future!

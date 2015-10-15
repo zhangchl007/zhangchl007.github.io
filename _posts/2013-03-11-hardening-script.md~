@@ -11,4 +11,4 @@ We wrote a script to perform RHEL6 Health checking, I will make it better if I h
 5. IBM Standard tools installation:ntp/tscm/tsm/srm                                           done   
 6. final patch  (It's depend on patch server ,It's my next plan in the future)                done
 
-<a href="http://pan.baidu.com/s/1kTleKuF">RHEL6 system hardening script</a>
+<a href="http://pan.baidu.com/s/1jvjWi">RHEL6 system hardening script</a>
