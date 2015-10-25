@@ -8,7 +8,7 @@ I will continue learning perl network programming ,it is the first example.
 
 server side
 <pre><code>
-#!/usr/bin/perl -w
+\#!/usr/bin/perl -w
 use strict;
 use Socket;
 use constant SIMPLE_UDP_PORT => 4001;  #define port
@@ -18,8 +18,8 @@ my $trans_serv =getprotobyname('udp');
 my $local_host =gethostbyname(LOCAL_INETNAME);
 my $local_port =shift||SIMPLE_UDP_PORT;
 my $local_addr =sockaddr_in($local_port,INADDR_ANY);
-  socket(UDP_SOCK,PF_INET,SOCK_DGRAM,$trans_serv) or die "can't create Socket:$!\n";#This value should always be the result of \
-a successful call to getprotobyname
+#$trans_serv#This value should always be the result of a successful call to getprotobyname
+  socket(UDP_SOCK,PF_INET,SOCK_DGRAM,$trans_serv) or die "can't create Socket:$!\n";
   bind(UDP_SOCK,$local_addr) or die "bind failed:$!\n";
 my $data;
 while(1)
