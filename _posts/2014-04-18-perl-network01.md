@@ -23,7 +23,7 @@ my $local_addr =sockaddr_in($local_port,INADDR_ANY);
   bind(UDP_SOCK,$local_addr) or die "bind failed:$!\n";
 my $data;
 while(1)
-{   my $from_who=recv(UDP_SOCK,$data,MAX_RECV_LEN,0);
+ {   my $from_who=recv(UDP_SOCK,$data,MAX_RECV_LEN,0);
     if ($from_who)
     {
       my ($the_port,$the_ip) = sockaddr_in ( $from_who);
@@ -37,13 +37,11 @@ while(1)
     }
    else
     { warn "Problem with recv: $!\n";
+  }
 }
-}
-
-
 <pre></code>
-client side
 
+client side
 <pre><code>
 \#!/usr/bin/perl -w
 use strict;
