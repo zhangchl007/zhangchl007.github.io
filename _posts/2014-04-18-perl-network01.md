@@ -45,7 +45,7 @@ while(1)
 client side
 
 <pre><code>
-#!/usr/bin/perl -w
+\#!/usr/bin/perl -w
 use strict;
 use Socket;
 use constant MAX_RECV_LEN    =>65536;
