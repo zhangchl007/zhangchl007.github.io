@@ -4,7 +4,7 @@ title: perl-networking-pipe/signal learning
 tag: perl
 ---
 The scripts are for pipe and pipe signal handling
-
+pipe
 <pre><code>
 \#!/usr/bin/perl -w
 use strict;
@@ -41,7 +41,7 @@ sub fibonacci {
 }
 }
 <pre></code>
-
+pipe signal
 <pre><code>
 \#!/usr/bin/perl -w
 use strict;
