@@ -5,7 +5,7 @@ tag: Docker
 ---
 Due to my laptop refreshment ,I have to rebuild ruby on rails environment for my github blog.It take a couple of hours to fix Jekyll and ruby on rails issue.
 
-1. ekyll 3.0.1 need ruby > =ruby 2.0.0
+1. jekyll 3.0.1 need ruby > =ruby 2.0.0
 2. When I run gem command after upgrading Ruby, I get the following error.
 <pre><code>
 $wget https://rubygems.global.ssl.fastly.net/rubygems/rubygems-2.5.0.tgz
