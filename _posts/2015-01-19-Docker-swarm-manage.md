@@ -5,7 +5,7 @@ tag: Docker
 ---
 
 It is the screen snapshot from my laptop , so easy with dockermachine
-<pre><code>
+<pre<code
 
 docker@docker01:~$ docker run swarm create
 Unable to find image 'swarm:latest' locally
@@ -23,17 +23,16 @@ Digest: sha256:51a30269d3f3aaa04f744280e3c118aea032f6df85b49819aee29d379ac313b5
 Status: Downloaded newer image for swarm:latest
 85558240c5f00e704d04ba34da1bb26d
 docker@docker01:~$ exit[root@oc3053148748 ~]# dockermachine create \
->         d virtualbox \
->         swarm \
->         swarmmaster \
->         swarmdiscovery token://<TOKENFROMABOVE> \
-> ^C
+         d virtualbox \
+         swarm \
+         swarmmaster \
+         swarmdiscovery token://<TOKENFROMABOVE \
 [root@oc3053148748 ~]# dockermachine create \
->         d virtualbox \
->         swarm \
->         swarmmaster \
->         swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
->         swarmmaster
+         d virtualbox \
+         swarm \
+         swarmmaster \
+         swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
+         swarmmaster
 Running precreate checks...
 Creating machine...
 (swarmmaster) OUT | Creating VirtualBox VM...
@@ -51,10 +50,10 @@ Setting Docker configuration on the remote daemon...
 Configuring swarm...
 To see how to connect Docker to this machine, run: dockermachine env swarmmaster
 [root@oc3053148748 ~]# dockermachine create \
->     d virtualbox \
->     swarm \
->     swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
->     swarmagent01
+     d virtualbox \
+     swarm \
+     swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
+     swarmagent01
 Running precreate checks...
 Creating machine...
 (swarmagent01) OUT | Creating VirtualBox VM...
@@ -72,10 +71,10 @@ Setting Docker configuration on the remote daemon...
 Configuring swarm...
 To see how to connect Docker to this machine, run: dockermachine env swarmagent01
 [root@oc3053148748 ~]# dockermachine create \
->     d virtualbox \
->     swarm \
->     swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
->     swarmagent02
+     d virtualbox \
+     swarm \
+     swarmdiscovery token://85558240c5f00e704d04ba34da1bb26d \
+     swarmagent02
 Running precreate checks...
 Creating machine...
 (swarmagent02) OUT | Creating VirtualBox VM...
@@ -120,4 +119,4 @@ docker@swarmmaster:~$ docker run swarm list token://85558240c5f00e704d04ba34da1b
 192.168.99.101:2376
 192.168.99.103:2376
 
-<pre></code>
+<pre</code
