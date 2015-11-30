@@ -2,7 +2,7 @@
 layout: default
 ---
 <div id="pagetitle"><h2>{{ page.title }}</h2></div>
-<small><p class="meta">{{ page.date | date:"%Y-%m" }}
+<small><p class="meta">{{ page.date | date_to_string }}
 {% if page.categories == blank %}
 | {{ page.categories }}
 {% endif %}</p></small>
