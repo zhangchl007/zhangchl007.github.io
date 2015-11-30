@@ -1,0 +1,44 @@
+---
+layout: post
+title: Install Ruby on Rails on RHEL 6
+tag: Docker
+---
+Due to my laptop refreshment ,I have to rebuild ruby on rails environment for my github blog.It take a couple of hours to fix Jekyll and ruby on rails issue.
+
+1. ekyll 3.0.1 need ruby > =ruby 2.0.0
+2. When I run gem command after upgrading Ruby, I get the following error.
+<pre><code>
+$wget https://rubygems.global.ssl.fastly.net/rubygems/rubygems-2.5.0.tgz
+$tar -zxvf rubygems-2.5.0.tgz 
+$cd rubygems-2.5.0
+$sudo ruby setup.rb
+$sudo gem install rubygems-update
+ERROR:  While executing gem ... (Gem::Exception)
+Unable to require openssl, install OpenSSL and rebuild ruby (preferred) or use non-HTTPS sources
+<pre></code>
+3. To fix the problem, you need to build and install Ruby extension for OpenSSL from the source as follows.
+<pre><code>
+$ sudo yum install openssl-devel
+$wget https://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.7.tar.gz
+$tar -zxvf ruby-2.1.7.tar.gz
+$cd  ruby-2.1.7/ext/openssl/ 
+$ ruby extconf.rb
+$ make topsrcdir="../../"
+$ sudo make install topsrcdir="../../"
+<pre></code>
+4. Because Jekyll 3 uses Kramdown by default,The following lines from my \_config.yml file: will be added 
+<pre><code>
+kramdown:
+input: GFM
+syntax_highlighter: rouge
+<pre></code>
+5. change one line in layout/post.html
+<pre><code>
+from \{\{ page.date \| date:"%Y-%m" \}\} to \{\{ page.date \| dateto_string \}\}
+<pre></code>
+6. Installing Recommended Packages for ruby and gem.
+<pre><code>
+sudo  yum install gcc-c++ patch readline readline-devel zlib zlib-devel 
+sudo  yum install libyaml-devel libffi-devel openssl-devel make 
+sudo  yum install bzip2 autoconf automake libtool bison iconv-devel
+<pre><code>
