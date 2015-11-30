@@ -5,8 +5,7 @@ tag: Docker
 ---
 
 It is the screen snapshot from my laptop , so easy with dockermachine
-<pre<code
-
+<pre><code>
 docker@docker01:~$ docker run swarm create
 Unable to find image 'swarm:latest' locally
 latest: Pulling from library/swarm
@@ -119,4 +118,5 @@ docker@swarmmaster:~$ docker run swarm list token://85558240c5f00e704d04ba34da1b
 192.168.99.101:2376
 192.168.99.103:2376
 
-<pre</code
+<pre></code>
+
