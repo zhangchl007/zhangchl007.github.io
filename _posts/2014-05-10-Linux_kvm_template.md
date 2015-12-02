@@ -17,16 +17,17 @@ virt-install --connect qemu:///system \
        --arch x86_64 \
         --pxe
 <pre></code>
+
 How to make a kvm guest os
 <pre><code>
 1.  Creating Definition File And Template Image and shut down docker01
 jimmy@oc3053148748 Downloads]$ sudo virsh list --all
  Id    Name                           State
-----------------------------------------------------
+\----------------------------------------------------
  1     Cobbler                        running
  2     Linux_Windows_7-KVM            running
  4     Coreos01                       running
- -     docker01                       shut off
+ \-     docker01                       shut off
 2.  virsh dumpxml docker01 >/home/jimmy/Downloads/template.xml
 3.  cp docker01.img  /home/jimmy/Downloads/template.img
 4.  in template.xml point the disk source file to template.img
