@@ -110,4 +110,5 @@ sub Prt_info {
      print color 'reset';
 }
 </pre></code> 
+
 <a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get_server_info.pl">code</a> 
