@@ -7,12 +7,12 @@ tag: perl
 \#!/usr/bin/perl -w
 use strict;
 use Term::ANSIColor;
-my ($cpu,$count,$cpu_core,$mem,$version,@a,@b,%h);
-my $user_name=$ENV{'USER'};
-if ($user_name ne "root") {
+my ($cpu,$count,$cpu\_core,$mem,$version,@a,@b,%h);
+my $user\_name=$ENV{'USER'};
+if ($user\_name ne "root") {
       print color 'bold red';
       print "Please execute the script by SUDO as root!\n";
-      print "For example:sudo /tmp/get_server_info.pl\n";
+      print "For example:sudo /tmp/get\_server\_info.pl\n";
       print color 'reset';
       exit(1);
 }
@@ -43,7 +43,7 @@ while (<FHC>){
    if ($\_=~/cpu\s+cores/){
       s/cpu\s+cores\s+:\s+(\d+)/$1/g;
       chomp;
-      $cpu_core=$\_;
+      $cpu\_core=$\_;
       } 
       
 }
@@ -84,26 +84,26 @@ while (<FHS>){
 close FHS;
 \#output
 if (defined($phynum)){
-      &Prt_info($cpu,$phynum+1,$cpu_core,$count,$mem,$version,\@b,\%h);
+      &Prt\_info($cpu,$phynum+1,$cpu\_core,$count,$mem,$version,\@b,\%h);
  }
 else {
       print color 'bold yellow';
       print "Your OS is a VM\n";
       print color 'reset';
-      &Prt_info($cpu,0,0,$count,$mem,$version,\@b,\%h);
+      &Prt\_info($cpu,0,0,$count,$mem,$version,\@b,\%h);
   }
-sub Prt_info {
-     my($a,$b,$c,$d,$e,$f,$ref_array01,$ref_hash01)=@\_;
+sub Prt\_info {
+     my($a,$b,$c,$d,$e,$f,$ref\_array01,$ref\_hash01)=@\\_;
      print color 'bold yellow';
      print "--------------The Server Summary----------------------\n";
      print "The OS Version is $f\n";
-     print "@{$ref_array01}";
+     print "@{$ref\_array01}";
      print "The CPU mode is\t$a\n";
      print "The number of physical CPU is\t$b\n";
      print "The number of CPU cores is\t$c\n";
      print "The number of logical CPUs is\t$d\n";
      print "The Memory is\t", int($e/(1024*1024)+1),"G\n";
-     while( my ($key,$value)=each%$ref_hash01) {
+     while( my ($key,$value)=each%$ref\_hash01) {
       print "The DISK $key is $value","G\n";
       }
      print "------------------------------------------------------\n";
@@ -111,4 +111,4 @@ sub Prt_info {
 }
 </pre></code> 
 
-<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get_server_info.pl">code</a> 
+<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get\_server\_info.pl">code</a> 
