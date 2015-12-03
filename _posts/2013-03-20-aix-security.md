@@ -3,7 +3,7 @@ layout: post
 title: A script to format /etc/security for AIX
 tag: perl
 ---
-I wrote a script to capture the tasks in cron job on AIX , but I feel it's not good ,which is more complicated than shell 
+I wrote a script to format /etc/security  on AIX like Linux:/etc/passwd as the requirement from Customer.
 <pre><code>
 \#!/usr/bin/perl -w
 use strict;
@@ -21,7 +21,7 @@ foreach my $dir (@lsdir) {
         print OU
   }
 print OU "\n";
-#rename("/tmp/passwd_","$name");
+\#rename("/tmp/passwd_","$name");
 close(FH);
 close(OU);
 };
