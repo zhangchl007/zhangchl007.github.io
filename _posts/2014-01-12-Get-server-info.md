@@ -110,4 +110,4 @@ sub Prt_info {
      print color 'reset';
 }
 </pre></code> 
-<a href="http://pan.baidu.com/s/1bn7FC4J">code</a> 
+<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get_server_info.pl">code</a> 
