@@ -27,23 +27,23 @@ close FHV;
 open (FHC,"<","/proc/cpuinfo") or die "coudn't open /proc/cpuinfo$!\n";
 \#match 
 while (<FHC>){
-   if ($_=~/model\s+name/){
+   if ($\_=~/model\s+name/){
       s/model\s+name\s:\s+(.*)/$1/g;
       chomp;
-      $cpu=$_;
+      $cpu=$\_;
       }
-   if ($_=~/physical\s+id/) {
+   if ($\_=~/physical\s+id/) {
       s/physical\s+id\s+:\s+(\d+)/$1/g;
-      push(@a,$_);
+      push(@a,$\_);
       } 
      
-   if ($_=~/processor/){ 
+   if ($\_=~/processor/){ 
    ++$count;
       }
-   if ($_=~/cpu\s+cores/){
+   if ($\_=~/cpu\s+cores/){
       s/cpu\s+cores\s+:\s+(\d+)/$1/g;
       chomp;
-      $cpu_core=$_;
+      $cpu_core=$\_;
       } 
       
 }
@@ -51,34 +51,34 @@ close FHC;
 \#Memory info
 open (FHM,"<","/proc/meminfo") or die "coudn't open /proc/meminfo$!\n";
 while (<FHM>){
-   if ($_=~/MemTotal:/){
+   if ($\_=~/MemTotal:/){
       s/MemTotal:\s+(\d+)\s+kB/$1/g;
-      $mem=$_;
+      $mem=$\_;
       }
 }
 close FHM;
 \#put scalar to array and find the max valve of physical id.
 my $phynum=shift@a;
   foreach(@a){
-     if ($_>$phynum){
-     $phynum=$_;
+     if ($\_>$phynum){
+     $phynum=$\_;
   }
 }
 \#Disk info
 open (FHD,"<","/proc/partitions") or die "The /proc/partitions couldn't be openned$!\n";
 while (<FHD>) {
-     $h{$2}=int($1/(1000*1000)+1) if $_=~/\s+\d+\s+\d+\s+(\d+)\s+([a-z]{3}\b)/;
+     $h{$2}=int($1/(1000*1000)+1) if $\_=~/\s+\d+\s+\d+\s+(\d+)\s+([a-z]{3}\b)/;
 }
 close FHD; 
 \#\#\#\#Server summary info\#\#\#
 open (FHS,"-|","/usr/sbin/dmidecode") or die "dmidecode permission denied$!\n";
 while (<FHS>){
-       \#if ($_=~/System\s+Information/../Base\s+Board\s+Information/){
-       if ($_=~/System\s+Information/../^$/){
-            push @b,"The Manufacturer is $1\n" if $_=~/\s+Manufacturer:\s+(.*)/;
-            push @b,"The Product Number is $1\n" if $_=~/\s+Product\s+Name:\s+(.*)/;
-            push @b,"The Product Model is $1\n" if $_=~/\s+Version:\s+(.*)/;
-            push @b,"The serial Number is $1\n" if $_=~/\s+Serial\s+Number:\s+(.*)/;
+       \#if ($\_=~/System\s+Information/../Base\s+Board\s+Information/){
+       if ($\_=~/System\s+Information/../^$/){
+            push @b,"The Manufacturer is $1\n" if $\_=~/\s+Manufacturer:\s+(.*)/;
+            push @b,"The Product Number is $1\n" if $\_=~/\s+Product\s+Name:\s+(.*)/;
+            push @b,"The Product Model is $1\n" if $\_=~/\s+Version:\s+(.*)/;
+            push @b,"The serial Number is $1\n" if $\_=~/\s+Serial\s+Number:\s+(.*)/;
  }
 }
 close FHS;
