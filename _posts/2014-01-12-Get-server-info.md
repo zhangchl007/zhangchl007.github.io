@@ -19,7 +19,7 @@ if ($user_name ne "root") {
 \#OS Version
 open (FHV,"<","/etc/issue") or die "coudn't open /etc/issue$!\n";
 while (<FHV>) {
-       $version=$_ if $_=~/Linux/;
+       $version=\$_ if \$_=~/Linux/;
        chomp($version);
 } 
 close FHV;
