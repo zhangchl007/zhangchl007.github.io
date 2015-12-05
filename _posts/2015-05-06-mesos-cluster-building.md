@@ -5,9 +5,13 @@ tag: Docker
 ---
 
 >docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+
 >docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+
 >docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+
 >docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+
 >docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 
 <pre><code>
@@ -104,7 +108,8 @@ cat >>/etc/init/marathon.conf <<EOF
  stop on runlevel [!2345]
  respawn
  respawn limit 10 5
- exec /opt/marathon/bin/start \--master zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos --zk zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/marathon
+ exec /opt/marathon/bin/start \--master zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos --zk \
+ zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/marathon
 EOF
 
 配置master节点服务启动规则 
