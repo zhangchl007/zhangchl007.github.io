@@ -4,11 +4,11 @@ title: Mesos+ZooKeeper+Marathon+Docker搭建PaaS
 tag: Docker
 ---
 
-docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+->docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+->docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+->docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+->docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+->docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 
 <pre><code>
 1.apt-get install curl python-setuptools python-pip python-dev python-protobuf
@@ -52,11 +52,11 @@ zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 
 
 [jimmy@oc3053148748 Desktop]$  for srv in docker01 docker02 docker03;do echo \--$srv--;ssh $srv "sudo cat /etc/mesos/zk";done
---docker01--
+\--docker01--
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
---docker02--
+\--docker02--
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
---docker03--
+\--docker03--
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 
 配置/etc/zookeeper/conf/myid ，指定id 对应master节点为1，2，3
@@ -68,7 +68,6 @@ zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 2
 \--docker03--
 3
-<pre></code>
 
 配置/etc/zookeeper/conf/zoo.cfg在3台master上
 server.1=192.168.122.220:2888:3888
@@ -83,7 +82,6 @@ for srv in docker01 docker02 docker03;do echo --$srv--;ssh $srv "sudo cat /etc/m
 2
 \--docker03--
 2
-<pre></code>
 
 配置master的主机和IP
 echo 192.168.122.220 | sudo tee /etc/mesos-master/ip
