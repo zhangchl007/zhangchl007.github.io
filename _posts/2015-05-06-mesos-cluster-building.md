@@ -4,59 +4,53 @@ title: Mesos+ZooKeeper+Marathon+Docker搭建PaaS
 tag: Docker
 ---
 
-#docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 
+<pre><code>
 1.apt-get install curl python-setuptools python-pip python-dev python-protobuf
 安装配置ZooKeeper
-<pre><code>
 apt-get install ZooKeeperd
 echo 1 | sudo dd of=/var/lib/ZooKeeper/myid
+
 安装Docker
 cat /etc/apt/sources.list.d/docker.list 
 deb https://apt.dockerproject.org/repo ubuntu-trusty main
 sudo apt-get install docker-engine
 sudo usermod -aG docker jimmy
 sudo service docker start
-<pre></code>
+
 安装配置Mesos－master和Mesos-slave
-<pre><code>
 curl -fL http://downloads.mesosphere.io/master/ubuntu/14.04/mesos_0.19.0~ubuntu14.04%2B1_amd64.deb -o /tmp/mesos.deb
 dpkg -i /tmp/Mesos.deb
 mkdir -p /etc/Mesos-master
 echo in_memory | sudo dd of=/etc/Mesos-master/registry
-<pre></code>
+
 安装配置Mesos的Python框架
 # curl -fL http://downloads.mesosphere.io/master/ubuntu/14.04/mesos-0.19.0_rc2-py2.7-linux-x86_64.egg -o /tmp/mesos.egg
 # easy_install /tmp/mesos.egg
+
 下载安装Mesos管理Docker的代理组件Deimos
-<pre><code>
 # pip install deimos
-<pre></code>
+
 配置Mesos使用Deimos
-<pre><code>
 # mkdir -p /etc/mesos-slave
 # echo /usr/local/bin/deimos | sudo dd of=/etc/mesos-slave/containerizer_path
 # echo external | sudo dd of=/etc/mesos-slave/isolation
-<pre></code>
 
-<pre><code>
 下载Marathon
-curl -O http://downloads.Mesosphere.io/marathon/marathon-0.6.0/marathon-0.6.0.tgz  
-<pre></code>
+curl -O http://downloads.Mesosphere.io/marathon/marathon-0.6.0/marathon-0.6.0.tgz 
+
 2. on the Master Servers
 配置3台master上的ZooKeeper,slave节点上的ZooKeeper服务停掉
-<pre><code>
 cat /etc/mesos/zk
 zk://localhost:2181/mesos替换成下面（所有节点，包括slave)
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
-<pre></code>
-2. on the Master Servers
 
-<pre><code>
+
 [jimmy@oc3053148748 Desktop]$  for srv in docker01 docker02 docker03;do echo \--$srv--;ssh $srv "sudo cat /etc/mesos/zk";done
 --docker01--
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
@@ -64,11 +58,9 @@ zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 --docker03--
 zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
-<pre></code>
 
 配置/etc/zookeeper/conf/myid ，指定id 对应master节点为1，2，3
 
-<pre><code>
 [jimmy@oc3053148748 Desktop]$  for srv in docker01 docker02 docker03;do echo \--$srv--;ssh $srv "sudo cat /etc/zookeeper/conf/myid";done
 \--docker01--
 1
@@ -79,10 +71,10 @@ zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos
 <pre></code>
 
 配置/etc/zookeeper/conf/zoo.cfg在3台master上
-<pre><code>
 server.1=192.168.122.220:2888:3888
 server.2=192.168.122.221:2888:3888
 server.3=192.168.122.222:2888:3888
+
 Configure Mesos 选举Quorum 
 for srv in docker01 docker02 docker03;do echo --$srv--;ssh $srv "sudo cat /etc/mesos-master/quorum";done 
 \--docker01--
@@ -94,7 +86,6 @@ for srv in docker01 docker02 docker03;do echo --$srv--;ssh $srv "sudo cat /etc/m
 <pre></code>
 
 配置master的主机和IP
-<pre><code>
 echo 192.168.122.220 | sudo tee /etc/mesos-master/ip
 sudo cp /etc/mesos-master/ip /etc/mesos-master/hostname
 [jimmy@oc3053148748 Desktop]$  for srv in docker01 docker02 docker03;do echo \--$srv--;ssh $srv "sudo cat  /etc/mesos-master/ip";done 
@@ -104,10 +95,8 @@ sudo cp /etc/mesos-master/ip /etc/mesos-master/hostname
 192.168.122.221
 \--docker03--
 192.168.122.222
-<pre></code>
 
 配置Marathon
-<pre><code>
 sudo tar -zxvf marathon-0.6.0.tgz  -C /opt/
 sudo mv /opt/marathon-0.6.0 /opt/marathon
 cat >>/etc/init/marathon.conf <<EOF
@@ -118,10 +107,8 @@ cat >>/etc/init/marathon.conf <<EOF
  respawn limit 10 5
  exec /opt/marathon/bin/start \--master zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/mesos --zk zk://192.168.122.220:2181,192.168.122.221:2181,192.168.122.222:2181/marathon
 EOF
-<pre></code>
 
 配置master节点服务启动规则 
-<pre><code>
 sudo stop mesos-slave
 echo manual | sudo tee /etc/init/mesos-slave.override
 启动服务sudo stop mesos-slave
@@ -134,7 +121,8 @@ Start an app with 128 MB memory, 1 CPU, and 1 instance
 curl -X POST -H "Accept: application/json" -H "Content-Type: application/json" \
     192.168.122.220:8080/v2/apps \
     -d '{"id": "app-123", "cmd": "sleep 600", "instances": 1, "mem": 128, "cpus": 1}'
-# Stop the app
+
+\# Stop the app
 curl -X DELETE 192.168.122.220:8080/v2/apps/app-123
 
 配置slave节点
