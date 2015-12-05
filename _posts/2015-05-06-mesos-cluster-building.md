@@ -3,7 +3,7 @@ layout: post
 title: Mesos+ZooKeeper+Marathon+Docker搭建PaaS
 tag: Docker
 ---
-
+>Jimmy Zhang 如果转发请注明链接
 >docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 
 >docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
@@ -152,3 +152,7 @@ sudo start mesos-slave
 成功搭建集群如下：
 ![Mesos01](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/mesos01.png "Mesos scale-up")
 ![Mesos02](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/mesos02.png "Mesos scale-up")
+![Mesos02](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/mesos03.png "Mesos scale-up")
+
+<a href="https://open.mesosphere.com/getting-started/install/">etting up a Mesos and Marathon Cluster</a>
+<a href="https://www.digitalocean.com/community/tutorials/how-to-configure-a-production-ready-mesosphere-cluster-on-ubuntu-14-04">configure-a-production-ready-mesosphere-cluster</a>
