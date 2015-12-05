@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to resize root lv with luks Encrption 
+title: How to resize root lv with luks Encription 
 tag: Linux
 ---
 Even I did it  many times ,but I have to write down the notes in case I forget it! 
