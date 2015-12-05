@@ -4,14 +4,15 @@ title: Mesos+ZooKeeper+Marathon+Docker搭建PaaS
 tag: Docker
 ---
 
-->docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-->docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-->docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-->docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
-->docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+>docker 01  IP:192.168.122.220  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+>docker 02  IP:192.168.122.221  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+>docker 03  IP:192.168.122.222  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+>docker 04  IP:192.168.122.223  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
+>docker 05  IP:192.168.122.224  Bcast:192.168.122.255  Mask:255.255.255.0 Ubuntu 14.04
 
 <pre><code>
 1.apt-get install curl python-setuptools python-pip python-dev python-protobuf
+
 安装配置ZooKeeper
 apt-get install ZooKeeperd
 echo 1 | sudo dd of=/var/lib/ZooKeeper/myid
@@ -30,16 +31,16 @@ mkdir -p /etc/Mesos-master
 echo in_memory | sudo dd of=/etc/Mesos-master/registry
 
 安装配置Mesos的Python框架
-# curl -fL http://downloads.mesosphere.io/master/ubuntu/14.04/mesos-0.19.0_rc2-py2.7-linux-x86_64.egg -o /tmp/mesos.egg
-# easy_install /tmp/mesos.egg
+ curl -fL http://downloads.mesosphere.io/master/ubuntu/14.04/mesos-0.19.0_rc2-py2.7-linux-x86_64.egg -o /tmp/mesos.egg
+ easy_install /tmp/mesos.egg
 
 下载安装Mesos管理Docker的代理组件Deimos
-# pip install deimos
+ pip install deimos
 
 配置Mesos使用Deimos
-# mkdir -p /etc/mesos-slave
-# echo /usr/local/bin/deimos | sudo dd of=/etc/mesos-slave/containerizer_path
-# echo external | sudo dd of=/etc/mesos-slave/isolation
+ mkdir -p /etc/mesos-slave
+ echo /usr/local/bin/deimos | sudo dd of=/etc/mesos-slave/containerizer_path
+ echo external | sudo dd of=/etc/mesos-slave/isolation
 
 下载Marathon
 curl -O http://downloads.Mesosphere.io/marathon/marathon-0.6.0/marathon-0.6.0.tgz 
@@ -141,8 +142,8 @@ echo manual | sudo tee /etc/init/zookeeper.override
 sudo stop mesos-master
 echo manual | sudo tee /etc/init/mesos-master.override
 sudo start mesos-slave
-<pre></code>
 
+<pre></code>
 成功搭建集群如下：
 ![Mesos01](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/mesos01.png "Mesos scale-up")
 ![Mesos02](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/mesos02.png "Mesos scale-up")
