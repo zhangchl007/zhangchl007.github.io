@@ -80,4 +80,5 @@ close SOCK;
 print STDERR "bytes_sent = $bytes_out, bytes_received = $bytes_in\n";
 <pre></code>
 
-<a href="http://dockerpool.com/static/books/docker_practice/container/enter.html">进入容器</a>
+<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/pl_sock_stcp02.pl">server side code</a>
+<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/pl_sock_ctcp02.pl">client side code</a>

@@ -111,4 +111,4 @@ sub Prt\_info {
 }
 </pre></code> 
 
-<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get\_server\_info.pl">code</a> 
+<a href="https://github.com/zhangchl007/zhangchl007.github.io/blob/master/upload/get_server_info.pl">code</a> 
