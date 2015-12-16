@@ -80,7 +80,6 @@ Attaching to composetest_redis_1, composetest_web_1
 jimmy@Coreos01:~$ docker ps -l
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 e38d83e3247c        composetest_web     "/bin/sh -c 'python a"   9 minutes ago       Up 9 minutes        0.0.0.0:5000->5000/tcp   composetest_web_1
-
 [jimmy@oc3053148748 Desktop]$ curl -L http://192.168.122.241:5000
 Hello World! I have been seen 7 times.[jimmy@oc3053148748 Desktop]$ 
 <a href="https://docs.docker.com/compose/gettingstarted/">Docker-compose-getting-started</a>
