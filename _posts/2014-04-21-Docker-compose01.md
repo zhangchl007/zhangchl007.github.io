@@ -72,7 +72,6 @@ composehaproxyweb_webb   latest              04fb79e8f011        2 weeks ago    
 composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago         675.2 MB
 <pre></code>
 4. Build and run your app with Compose
-
 <pre><code>
  docker-compose  up
 Pulling redis (redis:latest)...
@@ -86,10 +85,6 @@ cc3fb584d961: Pulling fs layer
 Successfully built 3131aa500109
 Creating composetest_web_1
 Attaching to composetest_redis_1, composetest_web_1
-redis_1 | 1:C 16 Dec 08:14:29.031 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
-redis_1 |                 _._                                                  
-redis_1 |            _.-``__ ''-._                                             
-redis_1 |       _.-``    `.  `_.  ''-._           Redis 3.0.5 (00000000/0) 64 bit
 <pre></code>
 5. check the web app:
 
