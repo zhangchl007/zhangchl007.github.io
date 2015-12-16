@@ -19,6 +19,7 @@ $pip install docker-compose
    
 Create a directory for the project:
 
+<pre><code>
 mkdir composetest
 jimmy@Coreos01:~/composetest$ tree -a
 .
@@ -58,10 +59,8 @@ CMD python app.py
 jimmy@Coreos01:~/composetest$ cat requirements.txt 
 flask
 redis
-
+<pre></code>
 3. Build the image
-
-<pre><code>
 $ docker build -t web .
 jimmy@Coreos01:~/composetest$ docker images
 REPOSITORY               TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -69,11 +68,7 @@ web                      latest              2e7cb752a718        33 minutes ago 
 composehaproxyweb_weba   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webb   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago         675.2 MB
-<pre></code>
-
 4. Build and run your app with Compose
-
-<pre><code>
  docker-compose  up
 Pulling redis (redis:latest)...
 latest: Pulling from library/redis
@@ -81,17 +76,11 @@ c950d63587be: Pulling fs layer
 Successfully built 3131aa500109
 Creating composetest_web_1
 Attaching to composetest_redis_1, composetest_web_1
-<pre></code>
-
 5. check the web app:
-
-<pre><code>
 jimmy@Coreos01:~$ docker ps -l
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 e38d83e3247c        composetest_web     "/bin/sh -c 'python a"   9 minutes ago       Up 9 minutes        0.0.0.0:5000->5000/tcp   composetest_web_1
 
 [jimmy@oc3053148748 Desktop]$ curl -L http://192.168.122.241:5000
 Hello World! I have been seen 7 times.[jimmy@oc3053148748 Desktop]$ 
-<pre></code>
-
 <a href="https://docs.docker.com/compose/gettingstarted/">Docker-compose-getting-started</a>
