@@ -34,7 +34,7 @@ syntax_highlighter: rouge
 <pre></code>
 5. change one line in layout/post.html
 <pre><code>
-from \{\{ page.date \| date:"%Y-%m" \}\} to \{\{ page.date \| dateto_string \}\}
+from \{\{ page.date \| dateto_string \}\} to \{\{ page.date \| date:"%Y-%m" \}\}
 <pre></code>
 6. Installing Recommended Packages for ruby and gem.
 <pre><code>
