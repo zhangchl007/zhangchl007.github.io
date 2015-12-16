@@ -60,9 +60,9 @@ jimmy@Coreos01:~/composetest$ cat requirements.txt
 flask
 redis
 <pre></code>
+
 3. Build the image
 
-<pre><code>
 $ docker build -t web .
 jimmy@Coreos01:~/composetest$ docker images
 REPOSITORY               TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -70,22 +70,17 @@ web                      latest              2e7cb752a718        33 minutes ago 
 composehaproxyweb_weba   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webb   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago         675.2 MB
-<pre></code>
+
 4. Build and run your app with Compose
-<pre><code>
+
  docker-compose  up
 Pulling redis (redis:latest)...
 latest: Pulling from library/redis
 c950d63587be: Pulling fs layer
-3ba3ba0cdebd: Pulling fs layer
-981344615426: Pulling fs layer
-74fe3245cc36: Pulling fs layer
-4c1f00c19929: Pulling fs layer
-cc3fb584d961: Pulling fs layer
 Successfully built 3131aa500109
 Creating composetest_web_1
 Attaching to composetest_redis_1, composetest_web_1
-<pre></code>
+
 5. check the web app:
 
 <pre><code>
