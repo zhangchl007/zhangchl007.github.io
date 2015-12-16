@@ -22,10 +22,10 @@ Create a directory for the project:
 mkdir composetest
 jimmy@Coreos01:~/composetest$ tree -a
 .
-\├── app.py
-\├── docker-compose.yml
-\├── Dockerfile
-\└── requirements.txt
+├── app.py
+├── docker-compose.yml
+├── Dockerfile
+└── requirements.txt
 
 0 directories, 4 files
 jimmy@Coreos01:~/composetest$ cat app.py 
@@ -47,11 +47,11 @@ jimmy@Coreos01:~/composetest$ cat docker-compose.yml
 web:
   build: .
   ports:
-\   - "5000:5000"
+   - "5000:5000"
   volumes:
-\   - .:/code
+   - .:/code
   links:
-\   - redis
+   - redis
 redis:
   image: redis
 jimmy@Coreos01:~/composetest$ cat Dockerfile 
@@ -66,6 +66,7 @@ redis
 <pre></code>
 
 3. Build the image.
+
 <pre><code>
 $ docker build -t web .
 jimmy@Coreos01:~/composetest$ docker images
@@ -77,6 +78,7 @@ composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago    
 <pre></code>
 
 4. Build and run your app with Compose
+
 <pre><code>
  docker-compose  up
 Pulling redis (redis:latest)...
