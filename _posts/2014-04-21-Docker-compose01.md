@@ -18,6 +18,7 @@ $pip install docker-compose
    While the sample uses Python, the concepts demonstrated here should be understandable even if you’re not familiar with it. 
    
 Create a directory for the project:
+
 <pre><code>
 mkdir composetest
 jimmy@Coreos01:~/composetest$ tree -a
@@ -39,7 +40,6 @@ redis = Redis(host='redis', port=6379)
 def hello():
     redis.incr('hits')
     return 'Hello World! I have been seen %s times.' % redis.get('hits')
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
@@ -63,10 +63,10 @@ CMD python app.py
 jimmy@Coreos01:~/composetest$ cat requirements.txt 
 flask
 redis
+\
 <pre></code>
 
-3. Build the image.
-
+3. Build the image
 <pre><code>
 $ docker build -t web .
 jimmy@Coreos01:~/composetest$ docker images
@@ -78,7 +78,6 @@ composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago    
 <pre></code>
 
 4. Build and run your app with Compose
-
 <pre><code>
  docker-compose  up
 Pulling redis (redis:latest)...
@@ -97,7 +96,6 @@ redis_1 |                 _._
 redis_1 |            _.-``__ ''-._                                             
 redis_1 |       _.-``    `.  `_.  ''-._           Redis 3.0.5 (00000000/0) 64 bit
 <pre></code>
-
 5. check the web app:
 <pre><code>
 jimmy@Coreos01:~$ docker ps -l
