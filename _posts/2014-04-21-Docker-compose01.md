@@ -5,8 +5,8 @@ tag: Docker
 ---
 
 Docker-compose is easy to install and deployment , Please refer to the following steps below.
-1. Install Docker Engine version 1.7.1 or greater:
 
+1. Install Docker Engine version 1.7.1 or greater:
 <pre><code>
 $curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 $ chmod +x /usr/local/bin/docker-compose
@@ -22,20 +22,18 @@ Create a directory for the project:
 mkdir composetest
 jimmy@Coreos01:~/composetest$ tree -a
 .
-├── app.py
-├── docker-compose.yml
-├── Dockerfile
-└── requirements.txt
+\├── app.py
+\├── docker-compose.yml
+\├── Dockerfile
+\└── requirements.txt
 
 0 directories, 4 files
 jimmy@Coreos01:~/composetest$ cat app.py 
 from flask import Flask
 from redis import Redis
 
-
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
-
 
 @app.route('/')
 def hello():
@@ -49,11 +47,11 @@ jimmy@Coreos01:~/composetest$ cat docker-compose.yml
 web:
   build: .
   ports:
-   - "5000:5000"
+\   - "5000:5000"
   volumes:
-   - .:/code
+\   - .:/code
   links:
-   - redis
+\   - redis
 redis:
   image: redis
 jimmy@Coreos01:~/composetest$ cat Dockerfile 
@@ -66,6 +64,7 @@ jimmy@Coreos01:~/composetest$ cat requirements.txt
 flask
 redis
 <pre></code>
+
 3. Build the image.
 <pre><code>
 $ docker build -t web .
@@ -76,6 +75,7 @@ composehaproxyweb_weba   latest              04fb79e8f011        2 weeks ago    
 composehaproxyweb_webb   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago         675.2 MB
 <pre></code>
+
 4. Build and run your app with Compose
 <pre><code>
  docker-compose  up
@@ -95,6 +95,7 @@ redis_1 |                 _._
 redis_1 |            _.-``__ ''-._                                             
 redis_1 |       _.-``    `.  `_.  ''-._           Redis 3.0.5 (00000000/0) 64 bit
 <pre></code>
+
 5. check the web app:
 <pre><code>
 jimmy@Coreos01:~$ docker ps -l
@@ -104,4 +105,5 @@ e38d83e3247c        composetest_web     "/bin/sh -c 'python a"   9 minutes ago  
 [jimmy@oc3053148748 Desktop]$ curl -L http://192.168.122.241:5000
 Hello World! I have been seen 7 times.[jimmy@oc3053148748 Desktop]$ 
 <pre></code>
+
 <a href="https://docs.docker.com/compose/gettingstarted/">Docker-compose-getting-started</a>
