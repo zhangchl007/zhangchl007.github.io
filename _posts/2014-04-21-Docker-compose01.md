@@ -27,20 +27,16 @@ jimmy@Coreos01:~/composetest$ tree -a
 ├── docker-compose.yml
 ├── Dockerfile
 └── requirements.txt
-
 0 directories, 4 files
 jimmy@Coreos01:~/composetest$ cat app.py 
 from flask import Flask
 from redis import Redis
-
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
-
 @app.route('/')
 def hello():
     redis.incr('hits')
     return 'Hello World! I have been seen %s times.' % redis.get('hits')
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
 jimmy@Coreos01:~/composetest$ cat docker-compose.yml 
@@ -63,10 +59,9 @@ CMD python app.py
 jimmy@Coreos01:~/composetest$ cat requirements.txt 
 flask
 redis
-\
 <pre></code>
-
 3. Build the image
+
 <pre><code>
 $ docker build -t web .
 jimmy@Coreos01:~/composetest$ docker images
@@ -76,8 +71,8 @@ composehaproxyweb_weba   latest              04fb79e8f011        2 weeks ago    
 composehaproxyweb_webb   latest              04fb79e8f011        2 weeks ago         675.2 MB
 composehaproxyweb_webc   latest              04fb79e8f011        2 weeks ago         675.2 MB
 <pre></code>
-
 4. Build and run your app with Compose
+
 <pre><code>
  docker-compose  up
 Pulling redis (redis:latest)...
@@ -97,6 +92,7 @@ redis_1 |            _.-``__ ''-._
 redis_1 |       _.-``    `.  `_.  ''-._           Redis 3.0.5 (00000000/0) 64 bit
 <pre></code>
 5. check the web app:
+
 <pre><code>
 jimmy@Coreos01:~$ docker ps -l
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
