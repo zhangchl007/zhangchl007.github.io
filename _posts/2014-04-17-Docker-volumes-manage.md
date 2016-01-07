@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Docker-learing04/Managing data in containers
+title: Docker-learning04/Managing data in containers
 tag: Docker
 ---
 

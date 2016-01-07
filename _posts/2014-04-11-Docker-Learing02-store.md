@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Docker-images-learning02/whereis are docker images?
+title: Docker-learning02/whereis are docker images?
 tag: Docker
 ---
 
