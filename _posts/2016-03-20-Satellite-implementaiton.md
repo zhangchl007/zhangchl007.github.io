@@ -1,6 +1,6 @@
 ---
 layout: post
-title: AIAVitality Transition Project
+title:AIAVitality Transition Project
 tag: Linux
 ---
 AIA Vitality Satellite system overview : DSY Satellite server would be Satellite 5,  
@@ -19,6 +19,7 @@ a three-tier architectur. the global satellite server -proxy server -client
 4. How Puppet/cobbler are interated into Satellite server
 
 5. How many Linux client server will be supported
+
 6.Git
 
 7.database/postpress sql
@@ -62,8 +63,9 @@ mv satellite5.test.com.xml  satellite5.test.com.cert
 Visit https://satellite5.test.com to create the Red Hat Satellite administrator account.
 
  https://avplinsat01.aiavitality.com
+
 configure email forward
-satadmin/AIA_secure01
+
 ln -s /usr/bin/ack_enqueuer.pl /etc/smrsh/.
 Open your firewall to the following hosts for access to Red Hat's Content D elivery Network (CD N):
 rhn.red hat.com
