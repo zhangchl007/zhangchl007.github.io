@@ -10,8 +10,8 @@ Basic useful feature list:
  for data volume
 
 And here's some code! :+1:
-
-```jjimmy@Coreos01:/opt$ ls -l /opt/app
+<pre><code>
+jjimmy@Coreos01:/opt$ ls -l /opt/app
 total 0
 -rw-r--r-- 1 root root 0 Jul  8 09:08 1.txt
 jimmy@Coreos01:/opt$ docker run -d -p 8080:5000 -v /opt/app/:/webapp training/webapp python app.py
@@ -47,7 +47,7 @@ jimmy@Coreos01:/opt$ docker exec elegant_carson ls -lR /webapp
 total 0
 -rw-r--r-- 1 root root 0 Jul  8 13:08 1.txt
 
-```
+<pre></code>
 
 This is [on GitHub](https://github.com/jbt/markdown-editor) so let me know if I've b0rked it somewhere.
 
