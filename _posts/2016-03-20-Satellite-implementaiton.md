@@ -1,6 +1,6 @@
 ---
 layout: post
-title:AIAVitality Transition Project
+title: AIAVitality Transition Project
 tag: Linux
 ---
 AIA Vitality Satellite system overview : DSY Satellite server would be Satellite 5,  
