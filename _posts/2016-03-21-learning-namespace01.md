@@ -4,7 +4,7 @@ title: Learning Linux namespace UTS (-)
 tag: Linux
 ---
 
-I take some time to study the series:introduction to Linux namespaces - Part 1: UTS
+I spent some time to study the series:introduction to Linux namespaces - Part 1: UTS
 it is very interesting ,I wrote the source code and complied them in my laptop 
 
 * We try to compile and execute the code below,actually ,we create a new child process /bin/bash, and found the system call clode instead of fork :)
