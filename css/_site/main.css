@@ -70,7 +70,7 @@ hr {
 }
 
 .posts li {
-  line-height: 1.75em;
+  line-height: 1em;
 }
 
 .posts span {
@@ -88,10 +88,10 @@ hr {
 .site {
   font-size: 115%;
   text-align: justify;
-  width: 60em;
+  width: 46em;
   margin: 0 auto;
   line-height: 1.5em;
-  padding: 3em 2em 2em 4em;
+  padding: 3em 2em 2em 2em;
   border: 1px solid #ddd;
   background-color: #fbfffd;
 }

@@ -21,7 +21,7 @@ Usage:
   {% include custom/tags_list %}
 {% else %}
   {% if tags_list.first[0] == null %}
-    {% for tag in tags_list %} 
+    {% for tag in tags_list %} {{ tag }}
     	<li><a href="{{ BASE_PATH }}{{ site.JB.tags_path }}#{{ tag }}-ref">{{ tag }} <span>{{ site.tags[tag].size }}</span></a></li>
     {% endfor %}
   {% else %}

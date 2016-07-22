@@ -1,0 +1,21 @@
+---
+layout: default
+title: "Blog · Jimmy Zhang"
+---
+
+<!--
+
+Liquid Sort By Year:
+
+  * update a post key with year, and use group_by
+  * create a dict to generate sort_by_year
+
+-->
+
+<div id="home">
+  <ul class="posts">
+    {% for post in site.posts %}
+      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
