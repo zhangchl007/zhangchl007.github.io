@@ -1,7 +1,7 @@
 name: "Hey · IT Guy!"
 description: "Jimmy's Blog, focus on Perl, Linux, infra automation, Storage/NetAPP, Open Source and so on."
 url: "http://zhangchl007.github.io/"
-markdown: redcarpet
+markdown: kramdown
 kramdown:
   input: GFM
   syntax_highlighter: rouge
