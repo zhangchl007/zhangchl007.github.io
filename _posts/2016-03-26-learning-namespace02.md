@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Introduction to Linux namespaces - Part2 IPC
+title: Learning Linux namespaces - Part2 IPC
 tag: Linux
 ---
 
