@@ -22,7 +22,7 @@ add_dracutmodules+="network nfs"
 add_drivers+="vmxnet3"
 mdadmconf="no"
 lvmconf="no"
-</code>
+&lt;/pre&gt;</code>
 
 
 1.2 Customized initramfs
@@ -39,14 +39,14 @@ title RHEL6_diskless (2.6.32-358.el6.x86_64)
 root (hd0,0)
 kernel /vmlinuz-2.6.32-358.el6.x86_64 rd.debug rd.shell rd.ip=auto root=nfs:192.168.122.17:/netboot/ rw 
 initrd /netboot6.img   
-</code>
+&lt;/pre&gt;</code>
 Deploy the static ip address for diskless client
 <pre><code>
 title RHEL6_diskless (2.6.32-358.el6.x86_64)
 root (hd0,0)
 kernel /vmlinuz-2.6.32-358.el6.x86_64 rd.debug rd.shell ip=192.168.122.16:192.168.122.17::255.255.255.0:test05:eth0:off root=nfs:192.168.122.17:/netboot/ rw 
 initrd /netboot6.img 
-</code>
+&lt;/pre&gt;</code>
 2. deploy NFS server in another RHEL6
 
 2.1 mkdir /netboot
@@ -76,7 +76,7 @@ tmpfs                   /dev/shm                tmpfs   defaults        0 0
 devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
 sysfs                   /sys                    sysfs   defaults        0 0
 proc                    /proc                   proc    defaults        0 0
-</code>
+&lt;/pre&gt;</code>
 Reference 
 
 http://people.redhat.com/harald/dracut-rhel6.html#Injecting

@@ -1,0 +1,335 @@
+<p>Please refer to the kickstart template below which was deployed by me.</p>
+
+<pre><code>
+
+\#platform=x86, AMD64, or Intel EM64T
+\# System authorization information
+auth  --useshadow  --enablemd5
+\# System bootloader configuration
+bootloader --location=mbr
+\# Partition clearing information
+clearpart --all --initlabel
+\# Use text mode install
+text
+\#skip key
+key --skip
+\# Firewall configuration
+firewall --disabled
+\# Run the Setup Agent on first boot
+firstboot --disable
+\# System keyboard
+keyboard us
+\# System language
+lang en_US
+\# Use network installation
+url --url=$tree
+\# If any cobbler repo definitions were referenced in the kickstart profile, include them here.
+$yum_repo_stanza
+\# Network information
+$SNIPPET('network_config')
+\# Reboot after installation
+reboot
+
+\#Root password
+rootpw --iscrypted $default_password_crypted
+\# SELinux configuration
+selinux --disabled
+\# Do not configure the X Window System
+\#skipx
+\# System timezone
+timezone Asia/Shanghai
+\# Install OS instead of upgrade
+install
+\# Clear the Master Boot Record
+zerombr
+\# Allow anaconda to partition the system as needed
+\#autopart
+clearpart --all --initlabel
+part /boot --fstype ext3 --size=256
+\#part pv.01 --size=1 --grow --ondisk=sda
+part pv.01 --size=1 --grow
+volgroup rootvg pv.01
+logvol  /  --vgname=rootvg  --size=2048  --name=lv_root
+logvol  /usr  --vgname=rootvg  --size=4096  --name=lv_usr
+logvol  /var  --vgname=rootvg  --size=2048  --name=lv_var
+logvol  /home  --vgname=rootvg  --size=1024  --name=lv_home
+logvol  swap  --vgname=rootvg  --size=2048  --name=lv_swap
+logvol  /tmp  --vgname=rootvg  --size=2048  --name=lv_tmp
+
+%pre
+$SNIPPET('log_ks_pre')
+$SNIPPET('kickstart_start')
+$SNIPPET('pre_install_network_config')
+\# Enable installation monitoring
+$SNIPPET('pre_anamon')
+
+%packages
+@base
+@core
+@emacs
+@compat-libraries
+kexec-tools
+fipscheck
+device-mapper-multipath
+sgpio
+binutils
+cifs-utils
+compat-db
+compat-db.i686
+compat-gcc-34
+compat-gcc-34-c++
+compat-libstdc++-33
+compat-libstdc++-33.i686
+elfutils-libelf
+elfutils-libelf-devel
+gcc
+gcc-c++
+glibc
+glibc-common
+glibc-devel
+glibc-devel.i686
+glibc-headers
+glibc.i686
+ksh
+libaio
+libaio-devel
+libaio-devel.i686
+libaio.i686
+libgcc
+libgcc.i686
+libstdc++
+libstdc++-devel
+libstdc++.i686
+libXp
+libXp.i686
+make
+numactl-devel
+openmotif
+openmotif.i686
+sysstat
+unixODBC
+unixODBC-devel
+unixODBC-devel.i686
+unixODBC.i686
+xorg-x11-xauth
+unzip
+ntp
+smartmontools
+postfix
+screen
+strace
+nfs-utils
+samba-client
+libusb-devel
+audit-libs-python
+crash
+dos2unix
+dump
+ftp
+gettext
+gpm
+hmaccalc
+iptstate
+iscsi-initiator-utils
+jwhois
+libhugetlbfs
+libselinux-python
+libsysfs
+libXdmcp
+logwatch
+mcstrans
+mgetty
+nc
+nss-tools
+pam_pkcs11
+patch
+pax
+redhat-lsb
+redhat-menus
+rmt
+symlinks
+sysfsutils
+tcl
+telnet
+tree
+udftools
+unix2dos
+openldap
+openldap-clients
+nscd
+system-config-keyboard
+rpm-build
+audit-libs.i686
+cracklib.i686
+db4.i686
+libselinux.i686
+pam.x86_64
+libsss_idmap
+libsss_sudo
+sssd
+sssd-client
+perl-URI
+-nss_db
+-nss_ldap
+-stunnel
+-krb5-workstation
+-mcelog
+-lftp
+-aspell-en
+-words
+-coolkey
+-aspell
+-fbset
+-dosfstools
+-mdadm
+-finger
+-irqbalance
+-autofs
+-sendmail
+-rdate
+-conman
+-pcmciautils
+-yum-updatesd
+-pam_ccreds
+-pam_smb
+-mtools
+-pkinit-nss
+-dhcpv6-client
+-microcode_ctl
+-cpuspeed
+-NetworkManager
+-mozldap
+-rsh
+-pinfo
+-ipsec-tools
+-rp-pppoe
+-svrcore
+-mkbootdisk
+-OpenIPMI
+-pam_krb5
+-irda-utils
+-amtu
+-ypbind
+-rdist
+-ccid
+-tcsh
+-anacron
+-eject
+-bluez-utils
+-talk
+-emacs-leim
+-psgml
+-emacspeak
+-pam_ldap
+-nss-pam-ldapd
+
+$SNIPPET('func_install_if_enabled')
+$SNIPPET('puppet_install_if_enabled')
+
+%post --log=/root/mypostlog
+$SNIPPET('log_ks_post')
+\# Start yum configuration
+$yum_config_stanza
+\# End yum configuration
+$SNIPPET('post_install_kernel_options')
+$SNIPPET('post_install_network_config')
+$SNIPPET('func_register_if_enabled')
+$SNIPPET('puppet_register_if_enabled')
+$SNIPPET('download_config_files')
+$SNIPPET('koan_environment')
+$SNIPPET('redhat_register')
+$SNIPPET('cobbler_register')
+\# Enable post-install boot notification
+$SNIPPET('post_anamon')
+\#ID creation\#\#\#\#\#
+groupadd ibm_sa
+groupadd szidadmin
+groupadd ibm_dba
+groupadd ibm_mid
+useradd -g ibm_sa xxxxx
+useradd -g ibm_sa xxxxx
+useradd -g ibm_sa xxxxx
+
+\#id labelling
+mkdir /mnt/temp
+mount -o nolock 10.68.32.197:/nfs/share /mnt/temp
+open -s -w -- /mnt/temp/labelling.sh
+\#Health checking/system hardening
+open -s -w -- /mnt/temp/HC_fixing.sh
+\#SUDO second logging
+mkdir -p /usr/local/scripts
+cp -p /mnt/temp/clean_history.ksh /usr/local/scripts
+cp -p /mnt/temp/mk_history.sh    /usr/local/scripts
+awk -F: '{print $1}' /etc/passwd &gt; /usr/local/scripts/osr_id.lst
+chmod 755 /usr/local/scripts -R
+mkdir -p /var/log/history
+chmod 1777 /var/log/history
+echo ". /usr/local/scripts/mk_history.sh" &gt;&gt; /etc/profile
+cat &lt;<EOF>/tmp/crontab.root
+\#\#\# Housekeep history \#\#\#
+0 0 * * 0 /usr/local/scripts/clean_history.ksh &gt; /tmp/clean_history.log 2&gt;&amp;1 &gt;/dev/null
+EOF
+crontab /tmp/crontab.root
+rm /tmp/crontab.root
+\#PAM seting
+cp /etc/pam.d/system-auth-ac /etc/pam.d/system-auth-ac.bak
+cat /dev/null &gt; /etc/pam.d/system-auth-ac
+                echo '\#%PAM-1.0
+\# This file is auto-generated.
+\# User changes will be destroyed the next time authconfig is run.
+auth        required      pam_env.so
+auth        required      pam_tally.so deny=5 onerr=fail no_magic_root
+auth        sufficient    pam_unix.so likeauth nullok
+auth        required      pam_deny.so
+
+account     required      pam_tally.so
+account     required      pam_unix.so
+account     sufficient    pam_succeed_if.so uid &lt; 100 quiet
+account     required      pam_permit.so
+
+password    required      pam_cracklib.so retry=5 minlen=8 dcredit=0 ucredit=0 lcredit=0 ocredit=0 type=
+password    sufficient    pam_unix.so remember=24 use_authtok md5 shadow
+password    required      pam_deny.so
+
+session     required      pam_limits.so
+session     required      pam_unix.so' &gt;&gt;/etc/pam.d/system-auth-ac
+\#\#\#sudo deployment\#\#\#\#\#\#\#\#
+rpm -Uvh http://10.75.1.199/mrepo/rhel5s-x86_64/RPMS.updates/sudo-1.8.13-1.el5.x86_64.rpm
+cp  /mnt/temp/sudoers.sampleconfig.8.4 /etc/sudoers
+cp  /mnt/temp/sudoers.d/*_GLB /etc/sudoers.d
+\#ntp time sync configuration
+sed -i 's/^server/\#server/g' /etc/ntp.conf
+echo "server miatime.mia.michelin.com" &gt;&gt; /etc/ntp.conf
+echo "server onctime.onc.michelin.com" &gt;&gt; /etc/ntp.conf
+/sbin/chkconfig --level 345 ntpd on
+if [ -f /etc/init.d/ntpd ]; then
+        /etc/init.d/ntpd stop
+        /etc/init.d/ntpd start
+fi
+\#BNU message
+echo '                                                                    ' &gt;&gt; /etc/motd
+echo '***   Access to and use of this system is strictly restricted    ***' &gt;&gt; /etc/motd
+echo '***             to explicitly authorized persons.                ***' &gt;&gt; /etc/motd
+echo '***     Any violation is prohibited and will be prosecuted.      ***' &gt;&gt; /etc/motd
+echo '                                                                    ' &gt;&gt; /etc/motd
+\#\#\#\#yum repository\#\#\#\#\#\#
+cp /mnt/temp/rhel6s.repo /etc/yum.repos.d/
+\#\#\#\#\#\#\#patch update \#\#\#\#\#\#\#
+/usr/bin/yum update -y
+\#VMware tool installation
+open -s -w -- /mnt/temp/vmware-tools-distrib/vmware-install.pl --default EULA_AGREED=yes
+\#IBM standard tool installation
+open -s -w -- /mnt/temp/install_x64.sh
+open -s -w -- /mnt/temp/ITM_Inst_upgd.sh  /mnt/temp/itm62222.agent /mnt/temp/6.2.2-TIV-ITM_TMV-Agents-FP0007
+umount /mnt/temp
+
+\# Start final steps
+$SNIPPET('kickstart_done')
+\# End final steps
+
+&lt;/pre&gt;&lt;/code&gt; 
+
+<a href="http://pan.baidu.com/s/1kTleKuF">RHEL6</a>
+<a href="http://pan.baidu.com/s/1sjABagP">RHEL7</a>
+
+</EOF></code></pre>

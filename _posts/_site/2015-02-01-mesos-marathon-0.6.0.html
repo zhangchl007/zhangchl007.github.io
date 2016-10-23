@@ -1,0 +1,317 @@
+<h1 id="marathon-build-statushttpstravis-ciorgmesospheremarathonpngbranchmasterhttpstravis-ciorgmesospheremarathon">Marathon <a href="https://travis-ci.org/mesosphere/marathon"><img src="https://travis-ci.org/mesosphere/marathon.png?branch=master" alt="Build Status" /></a></h1>
+
+<p>Marathon is an <a href="https://mesos.apache.org/" title="Apache Mesos">Apache Mesos</a> framework for long-running applications. Given that
+you have Mesos running as the kernel for your datacenter, Marathon is the
+<a href="https://en.wikipedia.org/wiki/Init" title="init"><code class="highlighter-rouge">init</code></a> or <a href="http://upstart.ubuntu.com/" title="Ubuntu's event-based daemons"><code class="highlighter-rouge">upstart</code></a> daemon.</p>
+
+<p>Marathon provides a
+<a href="https://github.com/mesosphere/marathon/blob/master/REST.md">REST API</a> for
+starting, stopping, and scaling applications. Marathon is written in Scala and
+can run in highly-available mode by running multiple copies of Marathon. The
+state of running tasks gets stored in the Mesos state abstraction.</p>
+
+<p>Try Marathon now on <a href="http://elastic.mesosphere.io">Elastic Mesos</a> and learn how
+to use it in Mesosphere’s interactive
+<a href="http://mesosphere.io/learn/run-services-with-marathon/">Marathon tutorial</a>
+that can be personalized for your cluster.</p>
+
+<p>Marathon is a <em>meta framework</em>: you can start other Mesos frameworks such as
+Chronos or <a href="http://storm-project.net/" title="distributed realtime computation">Storm</a> with it to ensure they survive machine failures.
+It can launch anything that can be launched in a standard shell. In fact, you
+can even start other Marathon instances via Marathon.</p>
+
+<h2 id="features">Features</h2>
+
+<ul>
+  <li><em>HA</em> – run any number of Marathon schedulers, but only one gets elected as
+  leader; if you access a non-leader, your request gets proxied to the
+  current leader</li>
+  <li><em><a href="https://github.com/mesosphere/marathon/wiki/Constraints">Constraints</a></em> - e.g., only one instance of an application per rack, node, etc.</li>
+  <li><em><a href="https://github.com/mesosphere/marathon/wiki/Service-Discovery-&amp;-Load-Balancing">Service Discovery &amp; Load Balancing</a></em> via HAProxy or the events API (see below).</li>
+  <li><em><a href="https://github.com/mesosphere/marathon/wiki/Health-Checks">Health Checks</a></em>: check your application’s health via HTTP or TCP checks.</li>
+  <li><em><a href="https://github.com/mesosphere/marathon/wiki/Event-Bus">Event Subscription</a></em> lets you supply an HTTP endpoint to receive notifications, for example to integrate with an external load balancer.</li>
+  <li><em>Web UI</em></li>
+  <li><em>JSON/REST API</em> for easy integration and scriptability</li>
+  <li><em>Basic Auth</em> and <em>SSL</em></li>
+  <li><em>Metrics</em>: available at <code class="highlighter-rouge">/metrics</code> in JSON format</li>
+</ul>
+
+<h2 id="overview">Overview</h2>
+
+<p>The graphic shown below depicts how Marathon runs on top of Mesos together with
+the Chronos framework. In this case, Marathon is the first framework to be
+launched and it runs alongside Mesos. In other words, the Marathon scheduler
+processes were started outside of Mesos using <code class="highlighter-rouge">init</code>, <code class="highlighter-rouge">upstart</code>, or a similar
+tool. Marathon launches two instances of the Chronos scheduler as a Marathon
+task. If either of the two Chronos tasks dies – due to underlying slave
+crashes, power loss in the cluster, etc. – Marathon will re-start a Chronos
+instance on another slave. This approach ensures that two Chronos processes are
+always running.</p>
+
+<p>Since Chronos itself is a framework and receives Mesos resource offers, it can
+start tasks on Mesos. In the use case shown below, Chronos is currently running
+two tasks. One dumps a production MySQL database to S3, while another sends an
+email newsletter to all customers via Rake. Meanwhile, Marathon also runs the
+other applications that make up our website, such as JBoss servers, a Jetty
+service, Sinatra, Rails, and so on.</p>
+
+<p><img src="https://raw.github.com/mesosphere/marathon/master/docs/img/architecture.png" alt="architecture" title="Marathon on Mesos" /></p>
+
+<p>The next graphic shows a more application-centric view of Marathon running
+three applications, each with a different number of tasks: Search (1), Jetty
+(3), and Rails (5).</p>
+
+<p><img src="https://raw.github.com/mesosphere/marathon/master/docs/img/marathon1.png" alt="Marathon1" title="Initial Marathon" /></p>
+
+<p>As the website gains traction and the user base grows, we decide to scale-out
+the search service and our Rails-based application. This is done via a
+REST call to the Marathon API to add more tasks. Marathon will take care of
+placing the new tasks on machines with spare capacity, honoring the
+constraints we previously set.</p>
+
+<p><img src="https://raw.github.com/mesosphere/marathon/master/docs/img/marathon2.png" alt="Marathon2" title="Marathon scale-out" /></p>
+
+<p>Imagine that one of the datacenter workers trips over a power cord and a server
+gets unplugged. No problem for Marathon, it moves the affected search service
+and Rails tasks to a node that has spare capacity. The engineer may be
+temporarily embarrased, but Marathon saves him from having to explain a
+difficult situation!</p>
+
+<p><img src="https://raw.github.com/mesosphere/marathon/master/docs/img/marathon3.png" alt="Marathon3" title="Marathon recovering an application" /></p>
+
+<h2 id="setting-up-and-running-marathon">Setting Up And Running Marathon</h2>
+
+<h3 id="requirements">Requirements</h3>
+
+<ul>
+  <li><a href="https://mesos.apache.org/" title="Apache Mesos">Mesos</a> 0.15.0+</li>
+  <li><a href="https://zookeeper.apache.org/" title="Apache Zookeeper">Zookeeper</a></li>
+  <li>JDK 1.6+</li>
+  <li>Scala 2.10+</li>
+  <li>sbt 0.13.5</li>
+</ul>
+
+<h3 id="installation">Installation</h3>
+
+<ol>
+  <li>
+    <p>Install <a href="https://mesos.apache.org/" title="Apache Mesos">Mesos</a>. One easy way is via your system’s package manager.
+Current builds for major Linux distributions and Mac OS X are available
+from on the Mesosphere <a href="http://mesosphere.io/downloads/">downloads page</a>.</p>
+
+    <p>If building from source, see the
+Mesos <a href="http://mesos.apache.org/gettingstarted/">Getting Started</a> page or the
+<a href="http://mesosphere.io/2013/08/01/distributed-fault-tolerant-framework-apache-mesos/">Mesosphere tutorial</a>
+for details. Running <code class="highlighter-rouge">make install</code> will install Mesos in <code class="highlighter-rouge">/usr/local</code> in
+the same way as these packages do.</p>
+  </li>
+  <li>
+    <p>Download and unpack the latest release.</p>
+
+    <p><strong>For Mesos 0.19.0:</strong></p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>curl -O http://downloads.mesosphere.io/marathon/marathon-0.6.0/marathon-0.6.0.tgz
+tar xzf marathon-0.6.0.tgz
+</code></pre>
+    </div>
+
+    <p><strong>For Mesos 0.17.0 to 0.18.2:</strong></p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>curl -O http://downloads.mesosphere.io/marathon/marathon-0.5.1/marathon-0.5.1.tgz
+tar xzf marathon-0.5.1.tgz
+</code></pre>
+    </div>
+
+    <p><strong>For Mesos 0.16.0 and earlier:</strong></p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>curl -O http://downloads.mesosphere.io/marathon/marathon-0.5.1_mesos-0.16.0/marathon-0.5.1_mesos-0.16.0.tgz
+tar xzf marathon-0.5.1_mesos-0.16.0.tgz
+</code></pre>
+    </div>
+
+    <p>SHA-256 checksums are available by appending <code class="highlighter-rouge">.sha256</code> to the URLs.</p>
+  </li>
+</ol>
+
+<h4 id="building-from-source">Building From Source</h4>
+
+<ol>
+  <li>
+    <p>To build Marathon from source, check out this repo and use sbt to build a JAR:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>git clone https://github.com/mesosphere/marathon.git
+cd marathon
+sbt assembly
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Run <code class="highlighter-rouge">./bin/build-distribution</code> to package Marathon as an
+<a href="http://mesosphere.io/2013/12/07/executable-jars/">executable JAR</a>
+(optional).</p>
+  </li>
+</ol>
+
+<h3 id="running-in-production-mode">Running in Production Mode</h3>
+
+<p>To launch Marathon in <em>production mode</em>, you need to have both
+<a href="https://zookeeper.apache.org/" title="Apache Zookeeper">Zookeeper</a> and Mesos running. The following command launches
+Marathon on Mesos in <em>production mode</em>. Point your web browser to
+<code class="highlighter-rouge">localhost:8080</code> and you should see the Marathon UI.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./bin/start --master zk://zk1.foo.bar:2181,zk2.foo.bar:2181/mesos --zk zk://zk1.foo.bar:2181,zk2.foo.bar:2181/marathon
+</code></pre>
+</div>
+
+<p>Marathon uses <code class="highlighter-rouge">--master</code> to find the Mesos masters, and <code class="highlighter-rouge">--zk</code> to find Zookeepers
+for storing state. They are separate options because Mesos masters can be
+discovered in other ways as well.</p>
+
+<h3 id="running-in-development-mode">Running in Development Mode</h3>
+
+<p>Mesos local mode allows you to run Marathon without launching a full Mesos
+cluster. It is meant for experimentation and not recommended for production
+use. Note that you still need to run Zookeeper for storing state. The following
+command launches Marathon on Mesos in <em>local mode</em>. Point your web browser to
+<code class="highlighter-rouge">http://localhost:8080</code>, and you should see the Marathon UI.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./bin/start --master local --zk zk://localhost:2181/marathon
+</code></pre>
+</div>
+
+<h3 id="command-line-options">Command Line Options</h3>
+
+<p>The following options can influence how Marathon works:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">--master</code>: The URL of the Mesos master. The format is a comma-delimited list of
+  of hosts like <code class="highlighter-rouge">zk://host1:port,host2:port/mesos</code>. Pay particular attention to the
+  leading <code class="highlighter-rouge">zk://</code> and trailing <code class="highlighter-rouge">/mesos</code>!</li>
+  <li><code class="highlighter-rouge">--failover_timeout</code>: The failover_timeout for mesos in seconds (default: 1 week)</li>
+  <li><code class="highlighter-rouge">--ha</code>: Runs Marathon in HA mode with leader election. Allows starting an arbitrary
+  number of other Marathons but all need to be started in HA mode. This mode
+  requires a running ZooKeeper. See <code class="highlighter-rouge">--master</code>.</li>
+  <li><code class="highlighter-rouge">--checkpoint</code>: Enable checkpointing of tasks. Requires checkpointing enabled on
+  slaves. Allows tasks to continue running during mesos-slave restarts and upgrades.</li>
+  <li><code class="highlighter-rouge">--local_port_min</code>: Min port number to use when assigning ports to apps.</li>
+  <li><code class="highlighter-rouge">--local_port_max</code>: Max port number to use when assigning ports to apps.</li>
+  <li><code class="highlighter-rouge">--executor</code>: Executor to use when none is specified.</li>
+  <li><code class="highlighter-rouge">--hostname</code>: The advertised hostname stored in ZooKeeper so another standby host
+  can redirect to the elected leader.</li>
+  <li><code class="highlighter-rouge">--mesos_role</code>: Mesos role for this framework.</li>
+  <li><code class="highlighter-rouge">--task_launch_timeout</code>: Time, in milliseconds, to wait for a task to enter the
+  TASK_RUNNING state before killing it.</li>
+  <li><code class="highlighter-rouge">--task_rate_limit</code>: This is the time window within which instances may be launched
+  for a given app.  For example, if an app has 5 instances, it will only launch 5
+  instances within 60s regardless of whether they succeed or fail.</li>
+  <li><code class="highlighter-rouge">--reconciliation_initial_delay</code>: This is the length of time, in milliseconds, before
+  Marathon begins to periodically perform task reconciliation operations.</li>
+  <li><code class="highlighter-rouge">--mesos_user</code>: Mesos user for this framework. Defaults to current user.</li>
+</ul>
+
+<h3 id="configuration-options">Configuration Options</h3>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">MESOS_NATIVE_LIBRARY</code>: <code class="highlighter-rouge">bin/start</code> searches the common installation paths,
+  <code class="highlighter-rouge">/usr/lib</code> and <code class="highlighter-rouge">/usr/local/lib</code>, for the Mesos native library. If the
+  library lives elsewhere in your configuration, set the environment variable
+  <code class="highlighter-rouge">MESOS_NATIVE_LIBRARY</code> to its full path.</p>
+
+    <p>For example:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>MESOS_NATIVE_LIBRARY=/Users/bob/libmesos.dylib ./bin/start --master local --zk zk://localhost:2181/marathon
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<p>Run <code class="highlighter-rouge">./bin/start --help</code> for a full list of configuration options.</p>
+
+<h2 id="rest-api-usage">REST API Usage</h2>
+
+<p>The full <a href="REST.md">API documentation</a> shows details about everything the
+Marathon API can do.</p>
+
+<h3 id="example-using-the-v2-api">Example using the V2 API</h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Start an app with 128 MB memory, 1 CPU, and 1 instance
+curl -X POST -H "Accept: application/json" -H "Content-Type: application/json" \
+    localhost:8080/v2/apps \
+    -d '{"id": "app-123", "cmd": "sleep 600", "instances": 1, "mem": 128, "cpus": 1}'
+
+# Scale the app to 2 instances
+curl -X PUT -H "Accept: application/json" -H "Content-Type: application/json" \
+    localhost:8080/v2/apps/app-123 \
+    -d '{"id": "app-123", "cmd": "sleep 600", "instances": 2, "mem": 128, "cpus": 1}'
+
+# Stop the app
+curl -X DELETE localhost:8080/v2/apps/app-123
+</code></pre>
+</div>
+
+<h5 id="example-starting-an-app-using-constraints">Example starting an app using constraints</h5>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># Start an app with a hostname uniqueness constraint
+curl -X POST -H "Accept: application/json" -H "Content-Type: application/json" \
+    localhost:8080/v2/apps \
+    -d '{"id": "constraints", "cmd": "hostname &amp;&amp; sleep 600", "instances": 10, "mem": 64, "cpus": 0.1, "constraints": [["hostname", "UNIQUE", ""]]}'
+</code></pre>
+</div>
+
+<h3 id="the-v1-api-deprecated">The V1 API (Deprecated)</h3>
+
+<p>The V1 API was deprecated in Marathon v0.4.0 on 2014-01-24 but continues to work
+as it did before being deprecated. Details on the V1 API can be found in the
+<a href="REST.md#api-version-1-deprecated">API documentation</a>.</p>
+
+<h2 id="marathon-clients">Marathon Clients</h2>
+
+<ul>
+  <li>
+    <p><a href="https://rubygems.org/gems/marathon_client">Ruby gem and command line client</a></p>
+
+    <p>Running Chronos with the Ruby Marathon Client:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>  marathon start -i chronos -u https://s3.amazonaws.com/mesosphere-binaries-public/chronos/chronos.tgz \
+      -C "./chronos/bin/demo ./chronos/config/nomail.yml \
+      ./chronos/target/chronos-1.0-SNAPSHOT.jar" -c 1.0 -m 1024 -H http://foo.bar:8080
+</code></pre>
+    </div>
+  </li>
+  <li><a href="https://github.com/guidewire/marathon-client">Scala client</a>, developed at Guidewire</li>
+  <li><a href="https://github.com/mohitsoni/marathon-client">Java client</a> by Mohit Soni</li>
+  <li><a href="https://github.com/thefactory/marathon-python">Python client</a>, developed at <a href="http://www.thefactory.com">The Factory</a></li>
+  <li><a href="https://github.com/Wizcorp/marathon-client.py">Python client</a>, developed at <a href="http://www.wizcorp.jp">Wizcorp</a></li>
+</ul>
+
+<h2 id="companies-using-marathon">Companies using Marathon</h2>
+
+<ul>
+  <li><a href="https://www.airbnb.com/">Airbnb</a></li>
+  <li><a href="http://www.ebay.com/">eBay</a></li>
+  <li><a href="http://www.guidewire.com/">Guidewire</a></li>
+  <li><a href="http://www.opentable.com/">OpenTable</a></li>
+  <li><a href="https://www.paypal.com">PayPal</a></li>
+  <li><a href="http://www.viadeo.com">Viadeo</a></li>
+</ul>
+
+<p>Not in the list? Open a pull request and add yourself!</p>
+
+<h2 id="help">Help</h2>
+
+<p>If you have questions, please post on the
+<a href="https://groups.google.com/forum/?hl=en#!forum/marathon-framework">Marathon Framework Group</a>
+email list. You can find Mesos support in the <code class="highlighter-rouge">#mesos</code> channel on
+<a href="https://freenode.net/" title="IRC channels">freenode</a> (IRC). The team at <a href="http://mesosphere.io/" title="Mesosphere">Mesosphere</a> is also happy
+to answer any questions.</p>
+
+<h2 id="authors">Authors</h2>
+
+<p>Marathon was created by <a href="https://github.com/guenter">Tobias Knaup</a> and
+<a href="https://github.com/florianleibert">Florian Leibert</a> and continues to be
+developed by the team at Mesosphere and by many contributors from
+the community.</p>
+
+<p><a href="http://githalytics.com/mesosphere/marathon"><img src="https://cruel-carlota.pagodabox.com/678b61f70ab36917caf159d22ba55f76" alt="githalytics.com alpha" title="githalytics.com" /></a></p>
+

@@ -1,0 +1,25 @@
+<p>I wrote a script to format /etc/security  on AIX like Linux:/etc/passwd as the requirement from Customer.</p>
+<pre><code>
+\#!/usr/bin/perl -w
+use strict;
+use File::Basename qw(fileparse);
+my @lsdir= glob "/home/hp09396/Spasswd/Spasswd*";
+foreach my $dir (@lsdir) {
+    my ($fname,$fdir)=fileparse($dir);
+    open (FH,"&lt;","$dir") or die "coudn't open password file:$!\n";
+    open (OU,"&gt;","/tmp/$fname") or die "coudn't creat the file:$!\n";
+    while (<FH>){
+        chomp if  $_=~/=/ or $_=~/\w+:/;
+        s/\s+password\s+=\s+//g;
+        s/\s+lastupdate\s+=\s+/:/g;
+        s/\s+flags\s+=\s+/:/g;
+        print OU
+  }
+print OU "\n";
+\#rename("/tmp/passwd_","$name");
+close(FH);
+close(OU);
+};
+chmod 0644, glob "/tmp/Spasswd*";
+&lt;/pre&gt;&lt;/code&gt;
+</FH></code></pre>

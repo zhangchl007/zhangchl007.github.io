@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Introduction to Linux namespaces - Part 3: PID
+title: Introduction to Linux namespaces - Part3 PID
 tag: Linux
 ---
 

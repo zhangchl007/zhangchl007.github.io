@@ -240,7 +240,7 @@ return $statement;
 }
 sub read_config_hash {
 my $href;
-while (<data>){
+while (<DATA>){
 chomp;
 my ($app,$application_name,$site,$country,$location) = split /,/;
 $href-&gt;{$app}{$site} = [$app,$application_name,$site,$country,$location];
@@ -250,5 +250,5 @@ return $href;
 __DATA__
 JDE,JDE-Singapore,APP_JDE_SG2,Singapore,SG2
 JDE,JDE-Thailand,APP_JDE_LCH,Thailand,LCH
-  
-</data></code></pre>
+&lt;/pre&gt;&lt;/code&gt;  
+</DATA></code></pre>

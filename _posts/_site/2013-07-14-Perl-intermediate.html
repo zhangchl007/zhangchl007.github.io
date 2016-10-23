@@ -83,12 +83,12 @@ grep EXPR, LIST</p>
 <p>This example prints any lines in the file named myfile that contain the (case-insensitive) strings terrorism or nuclear:</p>
 
 <p>open FILE “&lt;myfile” or die “Can’t open myfile: $!”;
-print grep /terrorism|nuclear/i, <file>;</file></p>
+print grep /terrorism|nuclear/i, <FILE>;</FILE></p>
 
 <p>This code consumes a lot of memory for large files because grep evaluates its second argument in a list context, and when the diamond operator (&lt;&gt;) is evaluated in a list context it returns the entire file. A more memory-efficient way to do the same thing is:
-while ($line = <file>) {
+while ($line = <FILE>) {
     if ($line =~ /terrorism|nuclear/i) { print $line }
-}</file></p>
+}</FILE></p>
 
 <p>This example shows that anything grep can do can also be done by a loop. So why use grep? The glib answer is that grep is more Perlish whereas loops are more C-like. A better answer is that grep makes it obvious that we are selecting elements from a list, and grep is more succinct than a loop. (Software engineers would say that grep has more cohesion than a loop.) Bottom line: if you are not experienced with Perl, go ahead and use loops; as you become familiar with Perl, take advantage of power tools like grep.
 Count array elements that match a pattern</p>
@@ -161,9 +161,9 @@ foreach $xy (@y_gt_x) { print “$xy-&gt;[0], $xy-&gt;[1]\n” }
       parking   =&gt; “validated”,
       rating    =&gt; 4, 
       payment   =&gt; “MC VISA AMEX”, 
-    },
-#    { … },  etc.
-);</p>
+    },</p>
+<h1 id="etc">{ … },  etc.</h1>
+<p>);</p>
 
 <p>sub findRestaurants {
     my ($database, $query) = @<em>;
@@ -279,9 +279,9 @@ y2ti3dal
 
 <p>Strip digits from the elements of an array</p>
 
-<p>As with grep, avoid modifying $_ in map’s block or using the returned list value as an lvalue, as this will modify the elements of LIST.
-# Trashes @array  :(
-@digitless = map { tr/0-9//d; $_ } @array;</p>
+<p>As with grep, avoid modifying $_ in map’s block or using the returned list value as an lvalue, as this will modify the elements of LIST.</p>
+<h1 id="trashes-array--">Trashes @array  :(</h1>
+<p>@digitless = map { tr/0-9//d; $_ } @array;</p>
 
 <h1 id="preserves-array--">Preserves @array  :)</h1>
 <p>@digitless = map { ($x = $_) =~ tr/0-9//d;  <br />
@@ -400,9 +400,9 @@ reverse sort { $a &lt;=&gt; $b } @array;</p>
 
 <p>Sort using multiple keys</p>
 
-<p>To sort by multiple keys, use a sort subroutine with multiple tests connected by Perl’s or operator. Put the primary sort test first, the secondary sort test second, and so on.
-# An array of references to anonymous hashes
-@employees = ( 
+<p>To sort by multiple keys, use a sort subroutine with multiple tests connected by Perl’s or operator. Put the primary sort test first, the secondary sort test second, and so on.</p>
+<h1 id="an-array-of-references-to-anonymous-hashes">An array of references to anonymous hashes</h1>
+<p>@employees = ( 
     { FIRST =&gt; ‘Bill’,   LAST =&gt; ‘Gates’,   <br />
       SALARY =&gt; 600000, AGE =&gt; 45 },
     { FIRST =&gt; ‘George’, LAST =&gt; ‘Tester’   <br />
@@ -487,19 +487,19 @@ file      - File name</p>
 
 <p>The sort subroutine will usually be called many times for each key. If the run time of the sort is critical, use the Orcish maneuver or Schwartzian transform so that each key is evaluated only once.</p>
 
-<p>Consider an example where evaluating the sort key involves a disk access: sorting a list of file names by file modification date.
-# Brute force - multiple disk accesses for each file
-@sorted = sort { -M $a &lt;=&gt; -M $b } @filenames;</p>
+<p>Consider an example where evaluating the sort key involves a disk access: sorting a list of file names by file modification date.</p>
+<h1 id="brute-force---multiple-disk-accesses-for-each-file">Brute force - multiple disk accesses for each file</h1>
+<p>@sorted = sort { -M $a &lt;=&gt; -M $b } @filenames;</p>
 
 <h1 id="cache-keys-in-a-hash-the-orcish-maneuver">Cache keys in a hash (the Orcish maneuver)</h1>
 <p>@sorted = sort { ($modtimes{$a} ||= -M $a) &lt;=&gt;
                  ($modtimes{$b} ||= -M $b)
                } @filenames;</p>
 
-<p>The Orcish maneuver was popularized by Joseph Hall. The name is derived from the phrase “or cache”, which is the term for the “||=” operator. (Orcish may also be a reference to the Orcs, a warrior race from the Lord of the Rings trilogy.)
-# Precompute keys, sort, extract results 
-# (The famous Schwartzian transform)
-@sorted = map( { $<em>-&gt;[0] } <br />
+<p>The Orcish maneuver was popularized by Joseph Hall. The name is derived from the phrase “or cache”, which is the term for the “||=” operator. (Orcish may also be a reference to the Orcs, a warrior race from the Lord of the Rings trilogy.)</p>
+<h1 id="precompute-keys-sort-extract-results">Precompute keys, sort, extract results</h1>
+<h1 id="the-famous-schwartzian-transform">(The famous Schwartzian transform)</h1>
+<p>@sorted = map( { $<em>-&gt;[0] } <br />
                sort( { $a-&gt;[1] &lt;=&gt; $b-&gt;[1] }
                      map({ [$</em>, -M] } @filenames)
                    )

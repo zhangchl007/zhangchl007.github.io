@@ -36,12 +36,13 @@
 
 <p>for $file (“/share/prog/defaults.rc”,</p>
 
-<pre><code>          "$ENV{HOME}/.someprogrc")
+<div class="highlighter-rouge"><pre class="highlight"><code>          "$ENV{HOME}/.someprogrc")
 </code></pre>
+</div>
 
 <p>{</p>
 
-<pre><code>   unless ($return = do $file) {
+<div class="highlighter-rouge"><pre class="highlight"><code>   unless ($return = do $file) {
 
        warn "couldn't parse $file: $@" if $@;
 
@@ -51,10 +52,11 @@
 
    }
 </code></pre>
+</div>
 
 <p>}</p>
 
-<p>eval <code>cat stat.pl</code>;</p>
+<p>eval <code class="highlighter-rouge">cat stat.pl</code>;</p>
 
 <p>do ‘stat.pl’;</p>
 
