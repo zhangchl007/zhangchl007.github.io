@@ -26,17 +26,25 @@ def api_return(url):
 ########define convert disk size######
 def convert(m,n):
    if (m=='TB'):
-       return float(n)*1000*1000*10000
+       return float(n)*1024*1024*1024
    elif (m=='GB'):
        return float(n)*1024*1024
    elif (m=='MB'):
-       return float(n)*1000
+       return float(n)*1024
    else:
         return float(n)
+
+########filter data##############
+def data_filter(f):
+  global v
+  k=re.compile('([\d.]+)\s+(\w+)')
+  v=k.search(f).groups()
+
 ######access rancher api#######
 while True:
 ######access rancher server api#######
 #  url = 'http://192.168.122.11:8080/v1/projects/1a5/physicalhosts'
+  url = 'http://182.140.210.213:8080/v1/projects/1a5/physicalhosts'
   hjson=api_return(url) 
   for i in hjson['data']:
       global host_name,time_stamp
@@ -58,34 +66,30 @@ while True:
           p5=re.search(r'Metadata Space Total',key)
           p6=re.search(r'Metadata Space Used',key)
           if (p1 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             data_free=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.data.free","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_free,host_name)
+              data_filter(d[key]) 
+              data_free=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.data.free","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_free,host_name)
           elif (p2 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             data_total=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.data.total","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_total,host_name)
+              data_filter(d[key]) 
+              data_total=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.data.total","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_total,host_name)
           elif (p3 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             data_used=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.data.used","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_used,host_name)
+              data_filter(d[key]) 
+              data_used=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.data.used","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,data_used,host_name)
           elif (p4 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             meta_free=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.metadata.free","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_free,host_name)
+              data_filter(d[key]) 
+              meta_free=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.metadata.free","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_free,host_name)
           elif (p5 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             meta_total=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.metadata.total","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_total,host_name)
+              data_filter(d[key]) 
+              meta_total=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.metadata.total","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_total,host_name)
           elif (p6 and d[key]):
-             k=re.compile('([\d.]+)\s+(\w+)')
-             v=k.search(d[key]).groups()
-             meta_used=convert(v[1],v[0])
-             print '{"metric":"docker.thinpool.metadata.used","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_used,host_name)
-
+              data_filter(d[key]) 
+              meta_used=convert(v[1],v[0])
+              print '{"metric":"docker.thinpool.metadata.used","timestamp":%d,"value":%s,"tags":{"machine":"%s"}}' %(time_stamp,meta_used,host_name)
+  
   time.sleep(10) 
+if __name__ == '__main__':
+    main()
