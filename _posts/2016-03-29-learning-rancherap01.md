@@ -57,7 +57,6 @@ def data_filter(f):
 while True:
 ######access rancher server api#######
 #  url = 'http://192.168.122.11:8080/v1/projects/1a5/physicalhosts'
-  url = 'http://182.140.210.213:8080/v1/projects/1a5/physicalhosts'
   hjson=api_return(url) 
   for i in hjson['data']:
       global host_name,time_stamp
