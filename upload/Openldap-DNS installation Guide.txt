@@ -1,0 +1,428 @@
+Openshift 整体方案 	0.5
+Gogs/Gitlab部署 	1
+NFS高可用部署 	1
+DNS主从 	1
+LDAP主备 	1
+
+
+3.2.2 配置DNS服务器
+3.2.2.1 安装DNS服务
+与DNS服务器上安装DNS服务软件包BIND。执行如下命令：
+yum -y install bind* iptables-services;
+systemctl enable named ;
+3.2.2.2 修改配置
+修改配置文件/etc/named.conf。命令如下：
+cp /etc/named.conf /etc/named.conf.bak.$(date "+%Y%m%d%H%M%S");
+sed -i s/"listen-on port 53 { 127.0.0.1; };"/"listen-on port 53 { any; };"/g /etc/named.conf;
+sed -i s/"listen-on-v6 port 53 { ::1; };"/"listen-on port 53 { any; };"/g /etc/named.conf;
+sed -i s/"allow-query     { localhost; };"/"allow-query     { any; };"/g /etc/named.conf;
+sed -i '/rfc1912/i\zone "apps.example.com" IN { type master; file "dynamic/apps.example.com.db"; };' /etc/named.conf
+sed -i '/rfc1912/i\zone "example.com" IN { type master; file "dynamic/example.com.db"; };' /etc/named.conf
+
+
+master example
+options {
+	listen-on port 53 { 127.0.0.1; 192.168.12222.109; };
+	directory 	"/var/named";
+	dump-file 	"/var/named/data/cache_dump.db";
+	statistics-file "/var/named/data/named_stats.txt";
+	memstatistics-file "/var/named/data/named_mem_stats.txt";
+	allow-query     { 192.168.12222.121; 192.168.12222.109; 127.0.0.1; };
+
+};
+
+
+Zone    "geekpills.com" IN {
+        type master;
+        file "geekpills.com.zone";
+	also-notify {192.168.12222.121;};
+	allow-transfer {192.168.12222.121;};
+};
+
+Zone 	"122.168.192.in-addr.arpa" IN {
+        type master;
+        file "192.168.12222.zone";
+	also-notify {192.168.12222.121;};
+	allow-transfer {192.168.12222.121;};
+        };
+		
+Slave example
+options {
+	listen-on port 53 { i127.0.0.1; 192.168.122.121; };
+	directory 	"/var/named";
+	dump-file 	"/var/named/data/cache_dump.db";
+	statistics-file "/var/named/data/named_stats.txt";
+	memstatistics-file "/var/named/data/named_mem_stats.txt";
+	allow-query     { 192.168.122.0/24; };
+};
+Zone    "geekpills.com" IN {
+       	type slave;
+	masters {192.168.122.109;};
+	file "slaves/db.geekpills.com.zone";
+};
+
+Zone    "122.168.192.in-addr.arpa" IN {
+	type slave;
+	masters {192.168.122.109;};
+       	file "slaves/db.192.168.122.zone";
+        };
+		
+		
+
+3.2.2.3 创建域名数据库文件
+在DNS服务器上创建域名数据库文件。需要注意subdomain的配置，本示例用的apps.example.com,需要后面定义ansible inventory的subdomain一致.命令如下：
+文件1： 
+ cat << EOF > /var/named/dynamic/example.com.db
+  \$ORIGIN .
+  \$TTL 1 ; 1 sec
+  example.com     IN  SOA  dns.example.com. master1.example.com. ( 
+                  2011112904 ; serial
+                  60         ; refresh
+                  15         ; retry
+                  1800       ; expire
+                  10         ; minimum
+             )
+         NS dns.example.com.
+         MX 10 mail.example.com.
+  \$ORIGIN example.com.
+  dns      A 192.168.5.111
+  master1    A 192.168.5.100
+  master2    A 192.168.5.101
+  master3    A 192.168.5.102
+master      A  192.168.5.11
+  router1    A 192.168.5.103
+  router2    A 192.168.5.104
+  router     A  192.168.5.22
+  registry1    A 192.168.5.105
+  registry2    A 192.168.5.106
+  registry   A  192.168.5.33
+  infra1    A 192.168.5.107
+  infra2    A 192.168.5.108
+  node1    A 192.168.5.109
+  node2    A 192.168.5.110
+  EOF
+文件2：
+  cat << EOF > /var/named/dynamic/apps.example.com.db
+  \$ORIGIN .
+  \$TTL 1 ; 1 sec
+  apps.example.com     IN  SOA  dns.apps.example.com. master1.apps.example.com. ( 
+                  2011112904 ; serial
+                  60         ; refresh
+                  15         ; retry
+                  1800       ; expire
+                  10         ; minimum
+             )
+         NS dns.apps.example.com.
+         MX 10 mail.apps.example.com.
+  \$ORIGIN apps.example.com.
+  *        A   192.168.5.22
+  EOF
+3.2.2.4 重启BIND服务
+重启BIND服务，使修改的配置生效。
+systemctl restart named;
+3.2.2.5 配置iptables
+修改iptables规则。命令如下：
+cp /etc/sysconfig/iptables /etc/sysconfig/iptables.bak.$(date "+%Y%m%d%H%M%S");
+sed -i '/.*--dport 22 -j ACCEPT.*/a\-A INPUT -p tcp -m state --state NEW -m tcp --dport 53 -j ACCEPT' /etc/sysconfig/iptables;
+sed -i '/.*--dport 22 -j ACCEPT.*/a\-A INPUT -p udp -m state --state NEW -m udp --dport 53 -j ACCEPT' /etc/sysconfig/iptables;
+sed -i '/.*--dport 22 -j ACCEPT.*/a\-A INPUT -p tcp -m state --state NEW -m tcp --dport 5000 -j ACCEPT' /etc/sysconfig/iptables;
+sed -i '/.*--dport 22 -j ACCEPT.*/a\-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT' /etc/sysconfig/iptables;
+
+systemctl restart iptables;
+3.2.2.6 配置DNS解析
+在所有的节点上配置启用新搭建的DNS服务器进行域名解析。命令如下：
+nmcli conn modify eth0 ipv4.dns 192.168.5.111;
+systemctl restart NetworkManager;
+3.2.2.7 测试DNS解析
+nslookup test.apps.example.com
+master1.example.com
+
+
+
+Openldap installation step
+
+yum -y install openldap-servers openldap-clients
+cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+chown ldap. /var/lib/ldap/DB_CONFIG 
+systemctl start slapd && systemctl enable slapd
+
+
+slappasswd
+admin
+{SSHA}nj9Lr18Vf7DeKIbazVxOXcgw+RRDuxZv
+
+chrootpw.ldif 
+# specify the password generated above for "olcRootPW" section
+
+dn: olcDatabase={0}config,cn=config
+changetype: modify
+add: olcRootPW
+olcRootPW: {SSHA}nj9Lr18Vf7DeKIbazVxOXcgw+RRDuxZv
+
+ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
+
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif 
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif 
+ 
+vi chdomain.ldif
+# replace to your own domain name for "dc=***,dc=***" section
+
+# specify the password generated above for "olcRootPW" section
+
+dn: olcDatabase={1}monitor,cn=config
+changetype: modify
+replace: olcAccess
+olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
+  read by dn.base="cn=Manager,dc=example,dc=com" read by * none
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc=example,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=Manager,dc=example,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+add: olcRootPW
+olcRootPW: {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,shadowLastChange by
+  dn="cn=Manager,dc=example,dc=com" write by anonymous auth by self write by * none
+olcAccess: {1}to dn.base="" by * read
+olcAccess: {2}to * by dn="cn=Manager,dc=example,dc=com" write by * read
+
+
+ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif 
+
+vi basedomain.ldif
+# replace to your own domain name for "dc=***,dc=***" section
+
+dn: dc=example,dc=com
+objectClass: top
+objectClass: dcObject
+objectclass: organization
+o: Server Com
+dc: Example
+
+dn: cn=Manager,dc=example,dc=com
+objectClass: organizationalRole
+cn: Manager
+description: Directory Manager
+
+dn: ou=People,dc=example,dc=com
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Group,dc=example,dc=com
+objectClass: organizationalUnit
+ou: Group
+
+ldapadd -x -D cn=Manager,dc=example,dc=com -W -f basedomain.ldif 
+firewall-cmd --add-service=ldap --permanent 
+firewall-cmd --reload 
+rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y phpldapadmin
+ vi /etc/httpd/conf.d/phpldapadmin.conf
+ 
+  Require all granted
+  
+systemctl restart httpd.service
+firewall-cmd --permanent --zone=public --add-service=http
+firewall-cmd --reload
+vi /etc/phpldapadmin/config.php
+
+Uncomment the line 397 and comment out the 398, like below.
+
+$servers->setValue('login','attr','dn');
+// $servers->setValue('login','attr','uid');
+
+setsebool -P httpd_can_connect_ldap on
+
+vi zxy.ldif
+dn: uid=zxy,ou=People,dc=example,dc=com
+uid: zxy
+cn: zxy
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+userPassword: 111111
+shadowLastChange: 14323
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: 1005
+gidNumber: 1005
+homeDirectory: /home/zxy
+
+ldapadd -x -D "cn=Manager,dc=example,dc=com" -W  -f zxy.ldif
+
+
+    vim ldapuser.sh  
+
+文件内容如下，注意，要使用你自己的域名替换掉 SUFFIX 变量：
+
+
+    #!/bin/bash  
+    # extract local users and groups who have 1000-9999 digit UID  
+    # replace "SUFFIX=***" to your own domain name  
+    # this is an example  
+      
+    SUFFIX='dc=ho1ho,dc=com'  
+    LDIF='ldapuser.ldif'  
+      
+    echo -n > $LDIF  
+    GROUP_IDS=()  
+    grep "x:[1-9][0-9][0-9][0-9]:" /etc/passwd | (while read TARGET_USER  
+    do  
+        USER_ID="$(echo "$TARGET_USER" | cut -d':' -f1)"  
+      
+        USER_NAME="$(echo "$TARGET_USER" | cut -d':' -f5 | cut -d' ' -f1,2)"  
+        [ ! "$USER_NAME" ] && USER_NAME="$USER_ID"  
+      
+        LDAP_SN="$(echo "$USER_NAME" | cut -d' ' -f2)"  
+        [ ! "$LDAP_SN" ] && LDAP_SN="$USER_NAME"  
+      
+        LASTCHANGE_FLAG="$(grep "${USER_ID}:" /etc/shadow | cut -d':' -f3)"  
+        [ ! "$LASTCHANGE_FLAG" ] && LASTCHANGE_FLAG="0"  
+      
+        SHADOW_FLAG="$(grep "${USER_ID}:" /etc/shadow | cut -d':' -f9)"  
+        [ ! "$SHADOW_FLAG" ] && SHADOW_FLAG="0"  
+      
+        GROUP_ID="$(echo "$TARGET_USER" | cut -d':' -f4)"  
+        [ ! "$(echo "${GROUP_IDS[@]}" | grep "$GROUP_ID")" ] && GROUP_IDS=("${GROUP_IDS[@]}" "$GROUP_ID")  
+      
+        echo "dn: uid=$USER_ID,ou=People,$SUFFIX" >> $LDIF  
+        echo "objectClass: inetOrgPerson" >> $LDIF  
+        echo "objectClass: posixAccount" >> $LDIF  
+        echo "objectClass: shadowAccount" >> $LDIF  
+        echo "sn: $LDAP_SN" >> $LDIF  
+        echo "givenName: $(echo "$USER_NAME" | awk '{print $1}')" >> $LDIF  
+        echo "cn: $USER_NAME" >> $LDIF  
+        echo "displayName: $USER_NAME" >> $LDIF  
+        echo "uidNumber: $(echo "$TARGET_USER" | cut -d':' -f3)" >> $LDIF  
+        echo "gidNumber: $(echo "$TARGET_USER" | cut -d':' -f4)" >> $LDIF  
+        echo "userPassword: {crypt}$(grep "${USER_ID}:" /etc/shadow | cut -d':' -f2)" >> $LDIF  
+        echo "gecos: $USER_NAME" >> $LDIF  
+        echo "loginShell: $(echo "$TARGET_USER" | cut -d':' -f7)" >> $LDIF  
+        echo "homeDirectory: $(echo "$TARGET_USER" | cut -d':' -f6)" >> $LDIF  
+        echo "shadowExpire: $(passwd -S "$USER_ID" | awk '{print $7}')" >> $LDIF  
+        echo "shadowFlag: $SHADOW_FLAG" >> $LDIF  
+        echo "shadowWarning: $(passwd -S "$USER_ID" | awk '{print $6}')" >> $LDIF  
+        echo "shadowMin: $(passwd -S "$USER_ID" | awk '{print $4}')" >> $LDIF  
+        echo "shadowMax: $(passwd -S "$USER_ID" | awk '{print $5}')" >> $LDIF  
+        echo "shadowLastChange: $LASTCHANGE_FLAG" >> $LDIF  
+        echo >> $LDIF  
+    done  
+      
+    for TARGET_GROUP_ID in "${GROUP_IDS[@]}"  
+    do  
+        LDAP_CN="$(grep ":${TARGET_GROUP_ID}:" /etc/group | cut -d':' -f1)"  
+      
+        echo "dn: cn=$LDAP_CN,ou=Group,$SUFFIX" >> $LDIF  
+        echo "objectClass: posixGroup" >> $LDIF  
+        echo "cn: $LDAP_CN" >> $LDIF  
+        echo "gidNumber: $TARGET_GROUP_ID" >> $LDIF  
+      
+        for MEMBER_UID in $(grep ":${TARGET_GROUP_ID}:" /etc/passwd | cut -d':' -f1,3)  
+        do  
+            UID_NUM=$(echo "$MEMBER_UID" | cut -d':' -f2)  
+            [ $UID_NUM -ge 1000 -a $UID_NUM -le 9999 ] && echo "memberUid: $(echo "$MEMBER_UID" | cut -d':' -f1)" >> $LDIF  
+        done  
+        echo >> $LDIF  
+    done  
+    )  
+
+之后，执行该脚本，会生成 ldapuser.ldif 文件：
+
+
+    sh ldapuser.sh  
+
+最后导入该文件：
+
+
+    # ldapadd -x -D cn=Manager,dc=ho1ho,dc=com -W -f ldapuser.ldif    
+    Enter LDAP Password:   
+    adding new entry "uid=ldapuser1,ou=People,dc=ho1ho,dc=com"  
+      
+    adding new entry "uid=ldapuser2,ou=People,dc=ho1ho,dc=com"  
+      
+    adding new entry "cn=ldapuser1,ou=Group,dc=ho1ho,dc=com"  
+      
+    adding new entry "cn=ldapuser2,ou=Group,dc=ho1ho,dc=com"  
+
+
+删除 LDAP 用户或组
+删除用户：
+
+
+    ldapdelete -x -W -D 'cn=Manager,dc=ho1ho,dc=com' "uid=ldapuser1,ou=People,dc=ho1ho,dc=com"  
+
+删除组：
+
+
+    ldapdelete -x -W -D 'cn=Manager,dc=ho1ho,dc=com' "cn=ldapuser1,ou=Group,dc=ho1ho,dc=com"  
+
+
+配置 LDAP 客户端，实现网络用户信息共享
+环境说明：
+客户端(192.168.21.177)
+LDAP Server(192.168.21.178)
+
+应用场景
+客户端需要共享 LDAP Server上的用户，希望以后任何一台机器(例如，192.168.21.189)，使用 LDAP Server 上的用户，就可以直接登录客户端。
+
+在客户端机器上执行如下命令
+首先安装必要包：
+
+
+    yum install -y openldap-clients nss-pam-ldapd authconfig authconfig-gtk  
+
+
+之后执行如下命令（注意，请使用自己的值替换 --ldapserver 和 --ldapbasedn 参数）：
+
+
+    authconfig --enableldap \  
+    --enableldapauth \  
+    --ldapserver=192.168.21.178 \  
+    --ldapbasedn="dc=ho1ho,dc=com" \  
+    --enablemkhomedir \  
+    --update  
+
+然后退出客户端控制台。之后就可以在任何一台机器上，使用 LDAP 用户登录客户端了。例如，在自己的机器(192.168.21.189)，使用 cent 用户（cent 为 LDAP 用户），登录客户端：
+
+
+    # ssh cent@192.168.21.177    
+    cent@192.168.21.177's password:   
+    Creating directory '/home/cent'.  
+
+请关闭 SELinux，否则可能无法自动创建用户目录，也就是用户的 home 目录。
+
+查询 LDAP 用户信息
+
+
+    $ ldapsearch -x -b "dc=ho1ho,dc=com" -H ldap://172.17.0.6  
+    # extended LDIF  
+    #  
+    # LDAPv3  
+    # base <dc=ho1ho,dc=com> with scope subtree  
+    # filter: (objectclass=*)  
+    # requesting: ALL  
+    #  
+      
+    # ho1ho.com  
+    dn: dc=ho1ho,dc=com  
+    objectClass: top  
+    objectClass: dcObject  
+    objectClass: organization  
+    ......  
+    ......  
+ 
