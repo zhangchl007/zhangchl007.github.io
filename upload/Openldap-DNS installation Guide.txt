@@ -425,4 +425,94 @@ LDAP Server(192.168.21.178)
     objectClass: organization  
     ......  
     ......  
- 
+ OpenLDAP Multi-Master Replication:
+
+Once your basic LDAP settings are complete, do the following steps to configure and setup your Multi-master replication. To do so, first we will add 'syncprov' module by opening the below file and put the below configurations in it.
+
+    #vim mod_syncprov.ldif
+
+    dn: cn=module,cn=config
+    objectClass: olcModuleList
+    cn: module
+    olcModulePath: /usr/lib64/openldap
+    olcModuleLoad: syncprov.la
+
+Save and close the file and run below command to start authentication.
+
+    # ldapadd -Y EXTERNAL -H ldapi:/// -f mod_syncprov.ldif
+
+Then open the given below file and put the mentioned configurations in it.
+
+    # vim syncprov.ldif
+
+    dn: olcOverlay=syncprov,olcDatabase={2}hdb,cn=config
+    objectClass: olcOverlayConfig
+    objectClass: olcSyncProvConfig
+    olcOverlay: syncprov
+    olcSpSessionLog: 100
+
+Now again run below command after adding your configurations.
+
+    # ldapadd -Y EXTERNAL -H ldapi:/// -f syncprov.ldif
+
+Add syncprov module
+
+Now we will configure the replication by including the most important configurations by placing the below configurations into the file of each of your master node.
+
+But don't forget to change the "olcServerID" and "provider=xxx" information acording to your server set different value on each server.
+
+    # vim ldap01.ldif
+
+    # create new
+    dn: cn=config
+    changetype: modify
+    replace: olcServerID
+    # specify unique ID number on each server
+    olcServerID: 0
+
+    dn: olcDatabase={2}hdb,cn=config
+    changetype: modify
+    add: olcSyncRepl
+    olcSyncRepl: rid=001
+    # specify your LDAP server's URI
+    provider=ldap://ldap1.test.com:389/
+    bindmethod=simple
+
+    # your own domain name
+    binddn="cn=Manager,dc=test,dc=com"
+    # directory manager's password
+    credentials=xxxxxx
+    searchbase="dc=test,dc=com"
+    # includes subtree
+    scope=sub
+    schemachecking=on
+    type=refreshAndPersist
+    # [retry interval] [retry times] [interval of re-retry] [re-retry times] retry="30 5 300 3"
+    # replication interval
+    interval=00:00:05:00
+    -
+    add: olcMirrorMode
+    olcMirrorMode: TRUE
+
+    dn: olcOverlay=syncprov,olcDatabase={2}hdb,cn=config
+    changetype: add
+    objectClass: olcOverlayConfig
+    objectClass: olcSyncProvConfig
+    olcOverlay: syncprov
+
+After saving, close the file and run below command to start final authentication.
+
+    # ldapmodify -Y EXTERNAL -H ldapi:/// -f ldap01.ldif
+
+    SASL/EXTERNAL authentication started
+    SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+    SASL SSF: 0
+    modifying entry "cn=config"
+
+    modifying entry "olcDatabase={2}hdb,cn=config"
+
+    adding new entry "olcOverlay=syncprov,olcDatabase={2}hdb,cn=config"
+
+That's it. OpenLDAP master replication setup is complete, now you can configure your LDAP Client to bind your LDAP master server by using below command on your client server.
+
+    # authconfig --ldapserver=ldap1.test.com,ldap2.test.com --update
