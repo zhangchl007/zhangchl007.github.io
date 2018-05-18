@@ -164,7 +164,8 @@ ldapadd -Y EXTERNAL -H ldapi:/// -f chrootpw.ldif
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif 
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif 
- 
+
+
 vi chdomain.ldif
 # replace to your own domain name for "dc=***,dc=***" section
 
@@ -199,8 +200,112 @@ olcAccess: {0}to attrs=userPassword,shadowLastChange by
 olcAccess: {1}to dn.base="" by * read
 olcAccess: {2}to * by dn="cn=Manager,dc=example,dc=com" write by * read
 
-
 ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif 
+
+
+LDAP MirrorMode
+
+ldap01 node
+
+cat << EOF > /etc/openldap/slapd.conf
+include     /etc/openldap/schema/core.schema
+include     /etc/openldap/schema/cosine.schema
+include     /etc/openldap/schema/inetorgperson.schema
+include     /etc/openldap/schema/nis.schema
+include         /etc/openldap/schema/ppolicy.schema
+allow bind\_v2
+pidfile     /var/run/openldap/slapd.pid
+argsfile    /var/run/openldap/slapd.args
+modulepath  /usr/lib64/openldap
+moduleload  syncprov.la
+loglevel acl conns trace sync stats args
+database    bdb
+suffix      "dc=fr-internal,dc=huaxxx,dc=com"
+rootdn      "cn=Manager,dc=fr-internal,dc=huaxxx,dc=com"
+rootpw      redhat
+access to *
+  by * read
+directory   /var/lib/ldap
+index objectClass                       eq,pres
+index ou,cn,mail,surname,givenname      eq,pres,sub
+index uidNumber,gidNumber,loginShell    eq,pres
+index uid,memberUid                     eq,pres,sub
+index nisMapName,nisMapEntry            eq,pres,sub
+index entryCSN              eq
+index entryUUID             eq
+serverID 1
+syncrepl      rid=001
+              provider=ldap://10.206.98.109:389
+              bindmethod=simple
+              binddn="cn=Manager,dc=fr-internal,dc=huaxxx,dc=com"
+              credentials=redhat
+              searchbase="dc=fr-internal,dc=huaxxx,dc=com"
+              attrs="*,+"
+              schemachecking=off
+              type=refreshAndPersist
+              retry="60 +"
+mirrormode on
+overlay syncprov
+syncprov-checkpoint 100 10
+syncprov-sessionlog 100
+
+EOF
+
+ldap02 node
+
+cat << EOF > /etc/openldap/slapd.conf
+include     /etc/openldap/schema/core.schema
+include     /etc/openldap/schema/cosine.schema
+include     /etc/openldap/schema/inetorgperson.schema
+include     /etc/openldap/schema/nis.schema
+include         /etc/openldap/schema/ppolicy.schema
+allow bind\_v2
+pidfile     /var/run/openldap/slapd.pid
+argsfile    /var/run/openldap/slapd.args
+modulepath  /usr/lib64/openldap
+moduleload  syncprov.la
+loglevel acl conns trace sync stats args
+
+database    bdb
+suffix      "dc=fr-internal,dc=huaxxx,dc=com"
+rootdn      "cn=Manager,dc=fr-internal,dc=huaxxx,dc=com"
+rootpw      redhat
+access to *
+  by * read
+directory   /var/lib/ldap
+index objectClass                       eq,pres
+index ou,cn,mail,surname,givenname      eq,pres,sub
+index uidNumber,gidNumber,loginShell    eq,pres
+index uid,memberUid                     eq,pres,sub
+index nisMapName,nisMapEntry            eq,pres,sub
+index entryCSN              eq
+index entryUUID             eq
+serverID 2
+syncrepl      rid=001
+              provider=ldap://10.206.98.72:389
+              bindmethod=simple
+              binddn="cn=Manager,dc=fr-internal,dc=huaxxx,dc=com"
+              credentials=redhat
+              searchbase="dc=fr-internal,dc=huaxxx,dc=com"
+              attrs="*,+"
+              schemachecking=off
+              type=refreshAndPersist
+              retry="60 +"
+mirrormode on
+overlay syncprov
+syncprov-checkpoint 100 10
+syncprov-sessionlog 100
+
+EOF
+
+
+rm -rf /etc/openldap/slapd.d/*
+
+slaptest -f /etc/openldap/slapd.conf -F /etc/openldap/slapd.d
+
+chown -R ldap.ldap /etc/openldap/slapd.d
+
+systemctl restart slapd
 
 vi basedomain.ldif
 # replace to your own domain name for "dc=***,dc=***" section
@@ -246,10 +351,10 @@ $servers->setValue('login','attr','dn');
 
 setsebool -P httpd_can_connect_ldap on
 
-vi zxy.ldif
-dn: uid=zxy,ou=People,dc=example,dc=com
-uid: zxy
-cn: zxy
+cat << EOF > test01.ldif
+dn: uid=test01,ou=oseusers,dc=fr-internal,dc=huaxxx,dc=com
+uid: test01
+cn: test01
 objectClass: account
 objectClass: posixAccount
 objectClass: top
@@ -261,10 +366,29 @@ shadowWarning: 7
 loginShell: /bin/bash
 uidNumber: 1005
 gidNumber: 1005
-homeDirectory: /home/zxy
+homeDirectory: /home/test01
+EOF
 
-ldapadd -x -D "cn=Manager,dc=example,dc=com" -W  -f zxy.ldif
+ldapadd -x -D "cn=Manager,dc=fr-internal,dc=huaxxx,dc=com" -W  -f test01.ldif
+dn: cn=Jane,ou=oseusers,dc=fr-internal,dc=huaxxx,dc=com
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: Jane
+sn: Smith
+displayName: Jane Smith
+mail: jane.smith@example.com
+EOF
 
+ldapadd -x -D "cn=Manager,dc=fr-internal,dc=huaxxx,dc=com" -W  -f ldap-user-Jane.ldif
+
+ldapdelete -x -W -D "cn=Manager,dc=fr-internal,dc=huaxxx,dc=com" "uid=test01,ou=oseusers,dc=fr-internal,dc=huaxxx,dc=com" 
+
+ldapsearch -x -b "dc=fr-internal,dc=huaxxx,dc=com" -H ldap://10.206.98.72
+ldapsearch -x -b "dc=fr-internal,dc=huaxxx,dc=com" -H ldap://10.206.98.109
+
+
+Migrate local password to Openldap
 
     vim ldapuser.sh  
 
