@@ -138,7 +138,6 @@ nslookup test.apps.example.com
 master1.example.com
 
 
-
 Openldap installation step
 
 yum -y install openldap-servers openldap-clients
@@ -166,39 +165,39 @@ ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif 
 
 
-vi chdomain.ldif
+cat << EOF > chdomain.ldif
 # replace to your own domain name for "dc=***,dc=***" section
-
 # specify the password generated above for "olcRootPW" section
 
 dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
 olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
-  read by dn.base="cn=Manager,dc=example,dc=com" read by * none
+  read by dn.base="cn=Manager,dc=fr-internal,dc=huaxxx,dc=com" read by * none
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 replace: olcSuffix
-olcSuffix: dc=example,dc=com
+olcSuffix: dc=fr-internal,dc=huaxxx,dc=com
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 replace: olcRootDN
-olcRootDN: cn=Manager,dc=example,dc=com
+olcRootDN: cn=Manager,dc=fr-internal,dc=xxx,dc=com
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 add: olcRootPW
-olcRootPW: {SSHA}xxxxxxxxxxxxxxxxxxxxxxxx
+olcRootPW: {SSHA}cYYZs401mWwggn5cXlYMvcsYnYLvF1Ts
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 add: olcAccess
 olcAccess: {0}to attrs=userPassword,shadowLastChange by
-  dn="cn=Manager,dc=example,dc=com" write by anonymous auth by self write by * none
+  dn="cn=Manager,dc=fr-internal,dc=huaxxx,dc=com" write by anonymous auth by self write by * none
 olcAccess: {1}to dn.base="" by * read
-olcAccess: {2}to * by dn="cn=Manager,dc=example,dc=com" write by * read
+olcAccess: {2}to * by dn="cn=Manager,dc=fr-internal,dc=huxxx,dc=com" write by * read
+EOF
 
 ldapmodify -Y EXTERNAL -H ldapi:/// -f chdomain.ldif 
 
@@ -307,6 +306,37 @@ chown -R ldap.ldap /etc/openldap/slapd.d
 
 systemctl restart slapd
 
+firewall-cmd --add-service=ldap --permanent 
+firewall-cmd --reload 
+
+option1
+rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y phpldapadmin 
+
+option2
+yum install php php-ldap webserver -y 
+rpm -ivh phpldapadmin-1.2.3-10.el7.noarch.rpm 
+
+ vi /etc/httpd/conf.d/phpldapadmin.conf
+ 
+  Require all granted
+  
+
+firewall-cmd --permanent --zone=public --add-service=http
+firewall-cmd --reload
+
+vi /etc/phpldapadmin/config.php
+
+Uncomment the line 397 and comment out the 398, like below.
+
+$servers->setValue('login','attr','dn');
+// $servers->setValue('login','attr','uid');
+
+setsebool -P httpd_can_connect_ldap on
+
+systemctl restart httpd.service
+systemctl enable httpd.service
+
 vi basedomain.ldif
 # replace to your own domain name for "dc=***,dc=***" section
 
@@ -331,25 +361,7 @@ objectClass: organizationalUnit
 ou: Group
 
 ldapadd -x -D cn=Manager,dc=example,dc=com -W -f basedomain.ldif 
-firewall-cmd --add-service=ldap --permanent 
-firewall-cmd --reload 
-rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum install -y phpldapadmin
- vi /etc/httpd/conf.d/phpldapadmin.conf
- 
-  Require all granted
-  
-systemctl restart httpd.service
-firewall-cmd --permanent --zone=public --add-service=http
-firewall-cmd --reload
-vi /etc/phpldapadmin/config.php
 
-Uncomment the line 397 and comment out the 398, like below.
-
-$servers->setValue('login','attr','dn');
-// $servers->setValue('login','attr','uid');
-
-setsebool -P httpd_can_connect_ldap on
 
 cat << EOF > test01.ldif
 dn: uid=test01,ou=oseusers,dc=fr-internal,dc=huaxxx,dc=com
