@@ -1,4 +1,4 @@
- cat /etc/ansible/hosts
+cat  /etc/ansible/hosts
 # Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
 # The lb group lets Ansible configure HAProxy as the load balancing solution.
 # Comment lb out if your load balancer is pre-configured.
@@ -55,13 +55,21 @@ openshift_master_default_subdomain=apps.mtl-expcloud.huawei.com
 openshift_metrics_install_metrics=true
 openshift_hosted_metrics_public_url=https://hawkular-metrics.apps.mtl-expcloud.huawei.com/hawkular/metrics
 openshift_metrics_image_prefix=registry.test01.com:5000/openshift3/
-openshift_metrics_image_version=v3.7.23
+openshift_metrics_image_version=v3.7.42
 openshift_logging_install_logging=true
 openshift_logging_image_prefix=registry.test01.com:5000/openshift3/
-openshift_logging_image_version=v3.7.23
+openshift_logging_image_version=v3.7.42
 
+# service catalog deployment
+#openshift_enable_service_catalog=false
+openshift_service_catalog_image_prefix=registry.test01.com:5000/openshift3/ose-
+ansible_service_broker_image_prefix=registry.test01.com:5000/openshift3/ose-
+ansible_service_broker_etcd_image_prefix=registry.test01.com:5000/rhel7/
+template_service_broker_prefix=registry.test01.com:5000/openshift3/
+openshift_service_catalog_image_version=v3.7.42
+ansible_service_broker_image_tag=v3.7.42
 #openshift_cockpit_deployer_prefix='registry.test01.com:5000/openshift3/'
-#openshift_cockpit_deployer_version='v3.7.23'
+#openshift_cockpit_deployer_version='v3.7.42'
 # override the default controller lease ttl
 #osm_controller_lease_ttl=30
 # enable ntp on masters to ensure proper failover
