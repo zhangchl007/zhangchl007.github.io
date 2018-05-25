@@ -1,3 +1,133 @@
+# Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
+# The lb group lets Ansible configure HAProxy as the load balancing solution.
+# Comment lb out if your load balancer is pre-configured.
+[OSEv3:children]
+masters
+nodes
+etcd
+lb
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+ansible_ssh_user=root
+openshift_deployment_type=openshift-enterprise
+openshift_release=v3.7
+#openshift_release=v3.7.23
+#openshift_disable_check=disk_availability,docker_image_availability,memory_availability,docker_storage
+openshift_disable_check=disk_availability,docker_image_availability,memory_availability
+
+# Enable cockpit
+osm_use_cockpit=true
+#
+# Set cockpit plugins
+osm_cockpit_plugins=['cockpit-kubernetes']
+oreg_url=registry.test01.com:5000/openshift3/ose-${component}:${version}
+# Docker option
+openshift_docker_options="--selinux-enabled --insecure-registry 172.30.0.0/16 --insecure-registry registry.test01.com:5000 --log-driver json-file --log-opt max-size=100M --log-opt max-file=10"
+openshift_docker_additional_registries=registry.test01.com:5000
+openshift_docker_insecure_registries=registry.test01.com:5000
+openshift_docker_blocked_registries=['public' , 'registry.access.redhat.com']
+#Network plan
+#openshift_portal_net=172.30.0.0/16
+#osm_cluster_network_cidr=10.128.0.0/14
+openshift_ocps_modify_imagestreams=true
+# Uncomment the following to enable htpasswd authentication; defaults to
+# DenyAllPasswordIdentityProvider.
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+#openshift_hosted_registry_selector="region=infra"
+#openshift_hosted_router_selector="router=true"
+
+# Native high availbility cluster method with optional load balancer.
+# If no lb group is defined installer assumes that a load balancer has
+# been preconfigured. For installation the value of
+# openshift_master_cluster_hostname must resolve to the load balancer
+# or to one or all of the masters defined in the inventory if no load
+# balancer is present.
+
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=openshift-api.test01.com
+openshift_master_cluster_public_hostname=openshift-cluster.test01.com
+
+# apply updated node defaults
+openshift_node_kubelet_args={'pods-per-core': ['10'], 'max-pods': ['110'], 'image-gc-high-threshold': ['90'], 'image-gc-low-threshold': ['80']}
+openshift_master_default_subdomain=apps.mtl-expcloud.huawei.com
+openshift_metrics_install_metrics=true
+openshift_hosted_metrics_public_url=https://hawkular-metrics.apps.mtl-expcloud.huawei.com/hawkular/metrics
+openshift_metrics_image_prefix=registry.test01.com:5000/openshift3/
+openshift_metrics_image_version=v3.7.42
+openshift_logging_install_logging=true
+openshift_logging_image_prefix=registry.test01.com:5000/openshift3/
+openshift_logging_image_version=v3.7.42
+openshift_logging_es_nodeselector="logging=true"
+openshift_logging_es_cluster_size=3
+openshift_logging_es_number_of_shards=2
+openshift_logging_es_number_of_replicas=1
+
+
+# service catalog deployment
+#openshift_enable_service_catalog=false
+openshift_service_catalog_image_prefix=registry.test01.com:5000/openshift3/ose-
+ansible_service_broker_image_prefix=registry.test01.com:5000/openshift3/ose-
+ansible_service_broker_etcd_image_prefix=registry.test01.com:5000/rhel7/
+template_service_broker_prefix=registry.test01.com:5000/openshift3/
+openshift_service_catalog_image_version=v3.7.42
+ansible_service_broker_image_tag=v3.7.42
+#openshift_cockpit_deployer_prefix='registry.test01.com:5000/openshift3/'
+#openshift_cockpit_deployer_version='v3.7.42'
+# override the default controller lease ttl
+#osm_controller_lease_ttl=30
+# enable ntp on masters to ensure proper failover
+openshift_clock_enabled=true
+
+# host group for master0s
+[masters]
+10.206.97.100  openshift_hostname=master01.test01.com openshift_ip=10.206.97.100 put_imagestream=true
+10.206.96.164  openshift_hostname=master02.test01.com openshift_ip=10.206.96.164
+10.221.181.201 openshift_hostname=master03.test01.com openshift_ip=10.221.181.201
+
+
+# host group for etcd
+[etcd]
+10.206.97.100   openshift_ip=10.206.97.100
+10.206.96.164   openshift_ip=10.206.96.164
+10.221.181.201  openshift_ip=10.221.181.201
+
+# Specify load balancer host
+[lb]
+10.206.98.154 openshift_hostname=api-lb01.test01.com
+10.206.98.190 openshift_hostname=api-lb02.test01.com
+
+# Specify nfs server host
+[nfs-nodes]
+infra-svc01.test01.com
+
+# host group for nodes, includes region info
+
+[nodes]
+10.206.97.100  openshift_hostname=test01.com openshift_ip=10.206.97.100 put_imagestream=true
+10.206.96.164  openshift_hostname=master02.test01.com openshift_ip=10.206.96.164
+10.221.181.201 openshift_hostname=master03.test01.com openshift_ip=10.221.181.201
+10.221.177.75  openshift_hostname=node01.test01.com  openshift_node_labels="{'region': 'primary', 'zone': 'default'}" openshift_ip=10.221.177.75
+10.221.177.146 openshift_hostname=node02.test01.com  openshift_node_labels="{'region': 'primary', 'zone': 'default'}" openshift_ip=10.221.177.146
+10.206.99.164  openshift_hostname=node03.test01.com  openshift_node_labels="{'region': 'primary', 'zone': 'default'}" openshift_ip=10.206.99.164
+10.221.177.209 openshift_hostname=node04.test01.com  openshift_node_labels="{'region': 'primary', 'zone': 'default'}" openshift_ip=10.221.177.209
+10.221.177.216 openshift_hostname=infra-node01.test01.com openshift_node_labels="{'region': 'infra', 'zone': 'default',}" openshift_ip=10.221.177.216
+10.221.177.226 openshift_hostname=infra-node02.test01.com openshift_node_labels="{'region': 'infra', 'zone': 'default',}" openshift_ip=10.221.177.226
+
+
+[reg-nodes]
+infra-reg01.test01.com
+infra-reg02.test01.com
+
+[ldap-nodes]
+ldap01.test01.com
+ldap02.test01.com
+
+[lb-nodes]
+infra-lb01.test01.com
+infra-lb02.test01.com
+
+
 cat  /etc/ansible/hosts
 # Create an OSEv3 group that contains the master, nodes, etcd, and lb groups.
 # The lb group lets Ansible configure HAProxy as the load balancing solution.
