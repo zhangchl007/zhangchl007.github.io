@@ -248,3 +248,21 @@ ldap02.test01.com
 [lb-nodes]
 infra-lb01.test01.com
 infra-lb02.test01.com
+
+
+ /etc/keepalived/check_haproxy.sh
+#!/bin/bash
+#判断haproxy是否已经启动
+if [ `ps -C haproxy --no-header |wc -l` -eq 0 ] ; then
+#如果没有启动，则启动haproxy程序
+systemctl start haproxy
+#睡眠3秒钟以等待haproxy完全启动
+sleep 3
+    if [ `ps -C haproxy --no-header |wc -l` -eq 0 ] ; then
+    systemctl stop keepalived
+   #如果haproxy还是没有启动，则将keepalived停掉，这样VIP会自动漂移到另外一台haproxy
+    fi
+fi
+
+chmod +x /etc/keepalived/check_haproxy.sh
+
