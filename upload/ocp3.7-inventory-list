@@ -1,1 +1,16 @@
 
+1. vi /etc/ansible/hosts
+   openshift_logging_es_nodeselector="logging=true"
+   openshift_logging_es_cluster_size=3
+   openshift_logging_es_number_of_shards=2
+   openshift_logging_es_number_of_replicas=1
+   
+
+   ansible-playbook  /usr/share/ansible/openshift-ansible/playbooks/byo/openshift-cluster/openshift-logging.yml
+ 
+ 2. Create mount directory
+ 
+  ansible infranodes  -a "vgcreate esdatavg /dev/sdc1"
+  ansible infranodes  -a "lvcreate -L 180G -n esdata-lv esdatavg"
+  ansible infranodes  -a "mkdir -p /ocp/esdata"
+  ansible infranodes  -a "mkfs.xfs /dev/mapper/esdatavg-esdata--lv"
