@@ -249,20 +249,49 @@ ldap02.test01.com
 infra-lb01.test01.com
 infra-lb02.test01.com
 
+1. vi /etc/ansible/hosts
+   openshift_logging_es_nodeselector="logging=true"
+   openshift_logging_es_cluster_size=3
+   openshift_logging_es_number_of_shards=2
+   openshift_logging_es_number_of_replicas=1
+   
 
- /etc/keepalived/check_haproxy.sh
-#!/bin/bash
-#判断haproxy是否已经启动
-if [ `ps -C haproxy --no-header |wc -l` -eq 0 ] ; then
-#如果没有启动，则启动haproxy程序
-systemctl start haproxy
-#睡眠3秒钟以等待haproxy完全启动
-sleep 3
-    if [ `ps -C haproxy --no-header |wc -l` -eq 0 ] ; then
-    systemctl stop keepalived
-   #如果haproxy还是没有启动，则将keepalived停掉，这样VIP会自动漂移到另外一台haproxy
-    fi
-fi
+   ansible-playbook  /usr/share/ansible/openshift-ansible/playbooks/byo/openshift-cluster/openshift-logging.yml
+ 
+ 2. Create mount directory
+ 
+  ansible infranodes  -a "vgcreate esdatavg /dev/sdc1"
+  ansible infranodes  -a "lvcreate -L 180G -n esdata-lv esdatavg"
+  ansible infranodes  -a "mkdir -p /ocp/esdata"
+  ansible infranodes  -a "mkfs.xfs /dev/mapper/esdatavg-esdata--lv"
+  
+  vi /etc/fstab 
+  /dev/mapper/esdatavg-esdata--lv   /ocp/esdata                     xfs     defaults        0 0
+  ansible infranodes  -a "mount -a"
+  ansible infranodes  -a "chown -R 1000:1000 /ocp/esdata"
 
-chmod +x /etc/keepalived/check_haproxy.sh
-
+  
+ 3.  Deploy 3 nodes eslasticsearch cluster
+  oc project logging
+  oc adm policy add-scc-to-user privileged  \
+       system:serviceaccount:logging:aggregated-logging-elasticsearch 
+  
+  for dc in $(oc get deploymentconfig --selector logging-infra=elasticsearch -o name); do
+    oc scale $dc --replicas=0
+    oc patch $dc \
+       -p '{"spec":{"template":{"spec":{"containers":[{"name":"elasticsearch","securityContext":{"privileged": true}}]}}}}'
+  done
+  
+  for i in node02 node03 node04 ;do oc label nodes $i logging=true;done
+  
+ oc patch $dc \
+ -p '{"spec":{"template":{"spec":{"nodeSelector":{"logging":"true"}}}}}'
+   
+   for dc in $(oc get deploymentconfig --selector logging-infra=elasticsearch -o name); do
+    oc set volume $dc \
+          --add --overwrite --name=elasticsearch-storage \
+          --type=hostPath --path=/ocp/esdata
+    oc rollout latest $dc
+    oc scale $dc --replicas=1
+  done
+ 
