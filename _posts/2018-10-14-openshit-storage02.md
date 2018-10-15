@@ -8,7 +8,7 @@ tag: Storage
 *  Take a notes for Ceph sample Setup
 
 
-1.  Ceph-deploy Setup Preperation 
++ 1  Ceph-deploy Setup Preperation 
 
    1. Firewall rule  
    2. NTP Sync
@@ -19,7 +19,7 @@ tag: Storage
      ## IOPS-optimized: 
    5. Storage Sizing 
 
-2. Configuring ansible group and ssh authentication
++ 2 Configuring ansible group and ssh authentication
 
 ```
 #  cat /etc/ansible/hosts
@@ -55,13 +55,13 @@ Host pcs02
    User cephuser
      
 ```
-3. Configuring firewall rules
++ 3 Configuring firewall rules
 
 # sudo firewall-cmd --zone=public --add-service=ceph-mon --permanent
 # sudo firewall-cmd --zone=public --add-service=ceph --permanent
 # sudo firewall-cmd --reload
 
-4. Add EPEL and Ceph repo
++ 4 Add EPEL and Ceph repo
 
 ```
 # ansible ceph-nodes -m shell -a 'yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm'
@@ -113,11 +113,17 @@ ceph version 12.2.8 (ae699615bac534ea496ee965ac6192cb7e0e07c0) luminous (stable)
 
 
 ```
-5. Add Ceph user
++ 5  Add Ceph user
 
 ``` 
 # ansible ceph-nodes -mshell -a 'useradd -d /home/cephuser -m cephuser'
 # ansible ceph-nodes -mshell -a 'echo "cephuser ALL = (root) NOPASSWD:ALL" | tee /etc/sudoers.d/cephuser'
+# ansible ceph-nodes -mshell -a 'sed -i "s/Defaults requiretty/#Defaults requiretty/g" /etc/sudoers'
+
+```
++ 6 Configuring Ceph Cluster
+
+```
 - create directory 
 # mkdir -p my-cluster/
 # ceph-deploy new ceph02 ceph03 ceph04
@@ -168,5 +174,11 @@ ID CLASS WEIGHT  TYPE NAME       STATUS REWEIGHT PRI-AFF
  2   hdd 0.02930         osd.2       up  1.00000 1.00000
 
 ```
++ 7 Configuring rbdmap 
 
+```
+cat /etc/ceph/rbdmap 
+# RbdDevice		Parameters
+poolname/imagename	id=admin,keyring=/etc/ceph/ceph.client.keyring
 
+# systemctl enable rbdmap.service
