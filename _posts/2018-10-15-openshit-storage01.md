@@ -92,7 +92,7 @@ EOF
 
 ```
 ansible nodes -myum -a 'name=ceph-common state=latest'
-node01.zhangchl008.tpddns.cn | SUCCESS => {
+node01.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -102,7 +102,7 @@ node01.zhangchl008.tpddns.cn | SUCCESS => {
         ""
     ]
 }
-node03.zhangchl008.tpddns.cn | SUCCESS => {
+node03.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -112,7 +112,7 @@ node03.zhangchl008.tpddns.cn | SUCCESS => {
         ""
     ]
 }
-infra01.zhangchl008.tpddns.cn | SUCCESS => {
+infra01.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -122,7 +122,7 @@ infra01.zhangchl008.tpddns.cn | SUCCESS => {
         ""
     ]
 }
-node02.zhangchl008.tpddns.cn | SUCCESS => {
+node02.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -132,7 +132,7 @@ node02.zhangchl008.tpddns.cn | SUCCESS => {
         ""
     ]
 }
-master01.zhangchl008.tpddns.cn | SUCCESS => {
+master01.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -142,7 +142,7 @@ master01.zhangchl008.tpddns.cn | SUCCESS => {
         ""
     ]
 }
-infra02.zhangchl008.tpddns.cn | SUCCESS => {
+infra02.zhangchl008.test.cn | SUCCESS => {
     "changed": false, 
     "failed": false, 
     "msg": "", 
@@ -203,7 +203,7 @@ EOF
 
 # oc get pods -o wide
 NAME        READY     STATUS    RESTARTS   AGE       IP            NODE
-ceph-pod1   1/1       Running   0          58m       10.128.2.32   node01.zhangchl008.tpddns.cn
+ceph-pod1   1/1       Running   0          58m       10.128.2.32   node01.zhangchl008.test.cn
 
 ```
 
