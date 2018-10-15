@@ -14,7 +14,7 @@ First, we suggest you create a seperated rbd pool for openshift data persistance
 
 ```
 # sudo ceph osd pool create kube 128  # 128 is pg number ,redhat recommendation 100-200 per osd
-
+# sudo ceph osd pool application enable kube rbd
 # sudo ceph auth get-or-create client.kube mon 'allow r, allow command "osd blacklist"' osd 'allow class-read object_prefix rbd_children, allow rwx pool=kube' -o ceph.client.kube.keyring
 
 ```
