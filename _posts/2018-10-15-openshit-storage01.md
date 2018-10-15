@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Persistent Storage using Ceph(12.2.8 luminous) RBD with Openshift V3.10
-tag: docker
+tag: Docker
 ---
 
 long time no update, It's hard to keep doing one thing :(
