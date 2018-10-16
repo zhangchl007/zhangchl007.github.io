@@ -56,11 +56,11 @@ Host pcs02
      
 ```
 + 3 Configuring firewall rules
-
+```
 # sudo firewall-cmd --zone=public --add-service=ceph-mon --permanent
 # sudo firewall-cmd --zone=public --add-service=ceph --permanent
 # sudo firewall-cmd --reload
-
+```
 + 4 Add EPEL and Ceph repo
 
 ```
@@ -182,3 +182,4 @@ cat /etc/ceph/rbdmap
 poolname/imagename	id=admin,keyring=/etc/ceph/ceph.client.keyring
 
 # systemctl enable rbdmap.service
+```

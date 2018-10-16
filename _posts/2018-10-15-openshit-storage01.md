@@ -10,7 +10,7 @@ long time no update, It's hard to keep doing one thing :(
 
 First, we suggest you create a seperated rbd pool for openshift data persistance
 
-- 1. create ceph rbd pool
+- 1 create ceph rbd pool
 
 ```
 # sudo ceph osd pool create kube 128  # 128 is pg number ,redhat recommendation 100-200 per osd
@@ -18,13 +18,13 @@ First, we suggest you create a seperated rbd pool for openshift data persistance
 # sudo ceph auth get-or-create client.kube mon 'allow r, allow command "osd blacklist"' osd 'allow class-read object_prefix rbd_children, allow rwx pool=kube' -o ceph.client.kube.keyring
 
 ```
-- 2. Set tunables profile to HAMMER for  Ceph 12.2.8 luminous ,otherwise the volume can't be mounted with Openshift pod
+- 2 Set tunables profile to HAMMER for  Ceph 12.2.8 luminous ,otherwise the volume can't be mounted with Openshift pod
 
 ```
 #sudo ceph osd crush tunables hammer 
  
 ```
-- 3. Get cliet key from ceph cluster
+- 3 Get cliet key from ceph cluster
 
 ```
 sudo ceph auth get-key client.admin | base64
@@ -34,7 +34,7 @@ sudo ceph auth get-key client.kube | base64
 QVFBT0NNUmJzUkFRR0JBQUJLRnFqQWd5WUZkald1WGU2emliZ2c9PQ==
 
 ```
-- 4. create the ceph user secret  
+- 4 create the ceph user secret  
 
 ```
 cat <<EOF > ceph-secret.yaml
@@ -64,7 +64,7 @@ EOF
 
 ```
 
-- 5. Create ceph storage class 
+- 5 Create ceph storage class 
 
 ```
 cat <<EOF >ceph-storageclass.yaml
@@ -88,7 +88,7 @@ EOF
 # oc create -f ceph-storageclass.yaml
 
 ```
-- 6. Make sure the latest ceph-common package had been installed all openshift nodes and 6789 port is openning for ceph
+- 6 Make sure the latest ceph-common package had been installed all openshift nodes and 6789 port is openning for ceph
 
 ```
 ansible nodes -myum -a 'name=ceph-common state=latest'
@@ -155,7 +155,7 @@ infra02.zhangchl008.test.cn | SUCCESS => {
 
 ```
 
-- 7. Create pvc into openshift  
+- 7 Create pvc into openshift  
 
 ```
 cat <<EOF > ceph-pvc.yaml
