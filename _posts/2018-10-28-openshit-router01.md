@@ -18,7 +18,7 @@ tag: Openshift
   
 *  It's a router sharding testing lab
 
-  ![Home-lab](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_images/sharding.png)
+  ![router-lab](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/sharding.png)
  
 + 2 select two infra-nodes for prod and dev env and label them as below.
 
