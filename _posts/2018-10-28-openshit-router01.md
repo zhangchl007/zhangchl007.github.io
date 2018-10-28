@@ -6,7 +6,7 @@ tag: Openshift
 
 
 *  The bigger Openshift cluster,In case , Customer want to seperate the traffic between critical and generate bussiness, The   router sharding would be a good way, Openshift router can choose the specifed node to support the different env, which      also can link the service in the specifed project.
-
+ 
 
 + 1  solution Design 
     1. Identify the bussiness app (prioritizing)
@@ -17,12 +17,14 @@ tag: Openshift
     7. Deploy and testing 
   
 *  It's a router sharding testing lab
+
+  ![Home-lab](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_images/sharding.png)
  
 + 2 select two infra-nodes for prod and dev env and label them as below.
 
 ```
-$ oc label node infra01.zhangchl008.tpddns.cn ha-router=true
-$ oc label node infra02.zhangchl008.tpddns.cn ha-router=true
+$ oc label node infra01.zhangchl008.example.com ha-router=true
+$ oc label node infra02.zhangchl008.example.com ha-router=true
 
 ```
 + 3 check the prod router 
@@ -42,7 +44,7 @@ $ oc set env dc/router NAMESPACE_LABELS="router=prod"
 
 ```
 $ oc adm router router-dev --replicas=0 --selector='node-role.kubernetes.io/infra=true' \
-  --service-account=router --ports='10080:10080,10443:10443' --images=registry.zhangchl008.tpddns.cn/openshift3/ose-haproxy-router:v3.11.16
+  --service-account=router --ports='10080:10080,10443:10443' --images=registry.zhangchl008.example.com/openshift3/ose-haproxy-router:v3.11.16
 
 $ oc env dc/router NAMESPACE_LABELS="router=dev"
 
@@ -99,7 +101,7 @@ $ oc adm ipfailover router-ha-dev \
     --replicas=2 --watch-port=10080 \
     --selector="ha-router=true" \
     --virtual-ips="192.168.0.17" \
-	--images=registry.zhangchl008.tpddns.cn/openshift3/ose-keepalived-ipfailover:v3.11.16 \
+	--images=registry.zhangchl008.example.com/openshift3/ose-keepalived-ipfailover:v3.11.16 \
     --service-account=ipfailover --create
 
 $ oc edit dc/router-ha-dev
@@ -162,13 +164,21 @@ $ oc label namespace app-dev  "router=dev"
 + 9 Deploy app in prod and dev env .
 
 ```
-$ oc new-app --name prod-nodejs https://github.com/zhangchl007/nodejs-demo --hostname=prod-nodejs-app-prod.apps.zhangchl008.tpddns.cn
+$ oc new-app --name prod-nodejs https://github.com/zhangchl007/nodejs-demo --hostname=prod-nodejs-app-prod.apps.zhangchl008.example.com
 
-$ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --hostname=dev-nodejs-app-dev.apps.zhangchl008.tpddns.cn
+$ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --hostname=dev-nodejs-app-dev.apps.zhangchl008.example.com
 
 ```
 + 10 Verify the app route for prod and dev 
 
 ```
+$ curl http://dev-nodejs-app-dev.apps.zhangchl008.tpddns.cn -o /dev/null
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  3131    0  3131    0     0   269k      0 --:--:-- --:--:-- --:--:--  277k
+$ curl http://prod-nodejs-app-prod.apps.zhangchl008.tpddns.cn -o /dev/null
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 40430  100 40430    0     0  3198k      0 --:--:-- --:--:-- --:--:-- 3290k
   
 ```
