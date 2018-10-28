@@ -172,13 +172,11 @@ $ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --host
 + 10 Verify the app route for prod and dev 
 
 ```
-$ curl http://dev-nodejs-app-dev.apps.zhangchl008.tpddns.cn -o /dev/null
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  3131    0  3131    0     0   269k      0 --:--:-- --:--:-- --:--:--  277k
-$ curl http://prod-nodejs-app-prod.apps.zhangchl008.tpddns.cn -o /dev/null
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100 40430  100 40430    0     0  3198k      0 --:--:-- --:--:-- --:--:-- 3290k
+$ http://dev-nodejs-app-dev.apps.zhangchl008.example.com
+  ![router-dev](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-dev.png)
+
+$ http://prod-nodejs-app-prod.apps.zhangchl008.example.com:10080 
   
+  ![router-prod](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-prod.png)
+
 ```
