@@ -171,7 +171,6 @@ $ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --host
 ```
 + 10 Verify the app route for prod and dev 
 
-```
 $ http://dev-nodejs-app-dev.apps.zhangchl008.example.com
   ![router-dev](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-dev.png)
 
@@ -179,4 +178,3 @@ $ http://prod-nodejs-app-prod.apps.zhangchl008.example.com:10080
   
   ![router-prod](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-prod.png)
 
-```
