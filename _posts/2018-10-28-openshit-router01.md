@@ -106,9 +106,9 @@ $ oc adm ipfailover router-ha-dev \
 
 $ oc edit dc/router-ha-dev
 
-改63000端口为64000
+change 63000 as the port: 64000
 
-$ $ oc get pods
+$ oc get pods
 NAME                       READY     STATUS    RESTARTS   AGE
 docker-registry-1-v4x2z    1/1       Running   2          10h
 registry-console-1-k2gnv   1/1       Running   2          10h
@@ -123,7 +123,7 @@ router-ha-dev-2-szksf      1/1       Running   2          6h
 
 ```
 
-+ 6  add firewall rule in two infra nodes 
++ 6  Add the firewall rule in two infra nodes and make it change with the config file "/etc/sysconfig/iptables"
 
 ```
 $ iptables -A OS_FIREWALL_ALLOW -p tcp -m state --state NEW -m tcp --dport 10443 -j ACCEPT
@@ -171,10 +171,11 @@ $ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --host
 ```
 + 10 Verify the app route for prod and dev 
 
-$ http://dev-nodejs-app-dev.apps.zhangchl008.example.com
+* http://dev-nodejs-app-dev.apps.zhangchl008.example.com:10080
+
   ![router-dev](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-dev.png)
 
-$ http://prod-nodejs-app-prod.apps.zhangchl008.example.com:10080 
+* http://prod-nodejs-app-prod.apps.zhangchl008.example.com
   
   ![router-prod](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-prod.png)
 
