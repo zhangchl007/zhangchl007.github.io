@@ -181,5 +181,6 @@ $ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --host
   
 * Reference:
  <a href="https://docs.openshift.com/container-platform/3.9/install_config/router/default_haproxy_router.html">Openshift Router</a>
+ 
  <a href="https://containers.ninja/openshift/loadbalancing/haproxy/sharding/2018/04/11/openshift-prod-dev-router-sharding.html">Openshift Router Sharding for Production and Development traffic</a>
 
