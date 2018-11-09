@@ -42,7 +42,6 @@ edit-role   1d
 ```
 
 A ClusterRole can be used to grant the same permissions as a Role, but because they are cluster-scoped, they can also be used to grant access to:
-
     * cluster-scoped resources (like nodes)
     * non-resource endpoints (like “/healthz”)
     * namespaced resources (like pods) across all namespaces (needed to run kubectl get pods --all-namespaces, for example)
@@ -297,12 +296,204 @@ The roles intended to be granted within particular namespaces using RoleBindings
 
 The super-user roles (cluster-admin), roles intended to be granted cluster-wide using ClusterRoleBindings (cluster-status
 
+<table>
+<colgroup><col width="25%"><col width="25%"><col></colgroup>
+<tr>
+<th>Default ClusterRole</th>
+<th>Default ClusterRoleBinding</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>**cluster-admin**</td>
+<td>**system:masters** group</td>
+<td>Allows super-user access to perform any action on any resource.
+When used in a **ClusterRoleBinding**, it gives full control over every resource in the cluster and in all namespaces.
+When used in a **RoleBinding**, it gives full control over every resource in the rolebinding's namespace, including the namespace itself.</td>
+</tr>
+<tr>
+<td>**admin**</td>
+<td>None</td>
+<td>Allows admin access, intended to be granted within a namespace using a **RoleBinding**.
+If used in a **RoleBinding**, allows read/write access to most resources in a namespace,
+including the ability to create roles and rolebindings within the namespace.
+It does not allow write access to resource quota or to the namespace itself.</td>
+</tr>
+<tr>
+<td>**edit**</td>
+<td>None</td>
+<td>Allows read/write access to most objects in a namespace.
+It does not allow viewing or modifying roles or rolebindings.</td>
+</tr>
+<tr>
+<td>**view**</td>
+<td>None</td>
+<td>Allows read-only access to see most objects in a namespace.
+It does not allow viewing roles or rolebindings.
+It does not allow viewing secrets, since those are escalating.</td>
+</tr>
+</table>
+
+### Core Component Roles
+
+<table>
+<colgroup><col width="25%"><col width="25%"><col></colgroup>
+<tr>
+<th>Default ClusterRole</th>
+<th>Default ClusterRoleBinding</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>**system:kube-scheduler**</td>
+<td>**system:kube-scheduler** user</td>
+<td>Allows access to the resources required by the kube-scheduler component.</td>
+</tr>
+<tr>
+<td>**system:volume-scheduler**</td>
+<td>**system:kube-scheduler** user</td>
+<td>Allows access to the volume resources required by the kube-scheduler component.</td>
+</tr>
+<tr>
+<td>**system:kube-controller-manager**</td>
+<td>**system:kube-controller-manager** user</td>
+<td>Allows access to the resources required by the kube-controller-manager component.
+The permissions required by individual control loops are contained in the [controller roles](#controller-roles).</td>
+</tr>
+<tr>
+<td>**system:node**</td>
+<td>None in 1.8+</td>
+<td>Allows access to resources required by the kubelet component, **including read access to all secrets, and write access to all pod status objects**.
+
+As of 1.7, use of the [Node authorizer](/docs/reference/access-authn-authz/node/) and [NodeRestriction admission plugin](/docs/reference/access-authn-authz/admission-controllers/#noderestriction) is recommended instead of this role, and allow granting API access to kubelets based on the pods scheduled to run on them.
+Prior to 1.7, this role was automatically bound to the `system:nodes` group.
+In 1.7, this role was automatically bound to the `system:nodes` group if the `Node` authorization mode is not enabled.
+In 1.8+, no binding is automatically created.
+</td>
+</tr>
+<tr>
+<td>**system:node-proxier**</td>
+<td>**system:kube-proxy** user</td>
+<td>Allows access to the resources required by the kube-proxy component.</td>
+</tr>
+</table>
+
+### Other Component Roles
+
+<table>
+<colgroup><col width="25%"><col width="25%"><col></colgroup>
+<tr>
+<th>Default ClusterRole</th>
+<th>Default ClusterRoleBinding</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>**system:auth-delegator**</td>
+<td>None</td>
+<td>Allows delegated authentication and authorization checks.
+This is commonly used by add-on API servers for unified authentication and authorization.</td>
+</tr>
+<tr>
+<td>**system:heapster**</td>
+<td>None</td>
+<td>Role for the [Heapster](https://github.com/kubernetes/heapster) component.</td>
+</tr>
+<tr>
+<td>**system:kube-aggregator**</td>
+<td>None</td>
+<td>Role for the [kube-aggregator](https://github.com/kubernetes/kube-aggregator) component.</td>
+</tr>
+<tr>
+<td>**system:kube-dns**</td>
+<td>**kube-dns** service account in the **kube-system** namespace</td>
+<td>Role for the [kube-dns](/docs/concepts/services-networking/dns-pod-service/) component.</td>
+</tr>
+<tr>
+<td>**system:kubelet-api-admin**</td>
+<td>None</td>
+<td>Allows full access to the kubelet API.</td>
+</tr>  
+<tr>
+<td>**system:node-bootstrapper**</td>
+<td>None</td>
+<td>Allows access to the resources required to perform
+[Kubelet TLS bootstrapping](/docs/reference/command-line-tools-reference/kubelet-tls-bootstrapping/).</td>
+</tr>
+<tr>
+<td>**system:node-problem-detector**</td>
+<td>None</td>
+<td>Role for the [node-problem-detector](https://github.com/kubernetes/node-problem-detector) component.</td>
+</tr>
+<tr>
+<td>**system:persistent-volume-provisioner**</td>
+<td>None</td>
+<td>Allows access to the resources required by most [dynamic volume provisioners](/docs/concepts/storage/persistent-volumes/#provisioner).</td>
+</tr>
+</table>
+
+### Controller Roles
+
+The [Kubernetes controller manager](/docs/admin/kube-controller-manager/) runs core control loops.
+When invoked with `--use-service-account-credentials`, each control loop is started using a separate service account.
+Corresponding roles exist for each control loop, prefixed with `system:controller:`.
+If the controller manager is not started with `--use-service-account-credentials`,
+it runs all control loops using its own credential, which must be granted all the relevant roles.
+These roles include:
+
+*   system:controller:attachdetach-controller
+*   system:controller:certificate-controller
+*   system:controller:cronjob-controller
+*   system:controller:daemon-set-controller
+*   system:controller:deployment-controller
+*   system:controller:disruption-controller
+*   system:controller:endpoint-controller
+*   system:controller:generic-garbage-collector
+*   system:controller:horizontal-pod-autoscaler
+*   system:controller:job-controller
+*   system:controller:namespace-controller
+*   system:controller:node-controller
+*   system:controller:persistent-volume-binder
+*   system:controller:pod-garbage-collector
+*   system:controller:pv-protection-controller
+*   system:controller:pvc-protection-controller
+*   system:controller:replicaset-controller
+*   system:controller:replication-controller
+*   system:controller:resourcequota-controller
+*   system:controller:route-controller
+*   system:controller:service-account-controller
+*   system:controller:service-controller
+*   system:controller:statefulset-controller
+*   system:controller:ttl-controller
 
 
 + 5  Privilege Escalation Prevention and Bootstrapping
+For example, this cluster role and role binding would allow “user-1” to grant other users the admin, edit, and view roles in the “user-1-namespace” namespace:
 
 ```
-
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: role-grantor
+rules:
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["rolebindings"]
+  verbs: ["create"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles"]
+  verbs: ["bind"]
+  resourceNames: ["admin","edit","view"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: role-grantor-binding
+  namespace: user-1-namespace
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: role-grantor
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: user-1
 
 
 ```
