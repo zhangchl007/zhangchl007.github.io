@@ -35,7 +35,7 @@ rules:
   resources: ["deployments", "replicasets", "pods"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] # 也可以使用['*']
 
-# oc get role -n test
+# kubectl get role -n test
 NAME        AGE
 edit-role   1d
 
@@ -64,7 +64,7 @@ rules:
 A role binding grants the permissions defined in a role to a user or set of users. It holds a list of subjects (users, groups, or service accounts)
 
 ```
-cat test-rolebinding.yaml 
+# cat test-rolebinding.yaml 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -230,7 +230,7 @@ rules: [] # Rules are automatically filled in by the controller manager.
 + 4 Default Roles and Role Bindings
 
 ```
-# oc get clusterroles
+# kubectl get clusterroles
 NAME                                                                   AGE
 admin                                                                  83d
 cluster-admin                                                          83d
@@ -557,14 +557,14 @@ users:
 
 # cp test.conf /root/.kube/config
 
-# oc get pods
+# kubectl get pods
 NAME                         READY     STATUS    RESTARTS   AGE
 web-server-6d76bcd4b-4sd4c   1/1       Running   0          1d
 web-server-6d76bcd4b-zj9wz   1/1       Running   0          1d
-# oc get namespaces
+# kubectl get namespaces
 No resources found.
 Error from server (Forbidden): namespaces is forbidden: User "test" cannot list namespaces at the cluster scope
-# oc get pods --all-namespaces -o wide
+# kubectl get pods --all-namespaces -o wide
 No resources found.
 Error from server (Forbidden): pods is forbidden: User "test" cannot list pods at the cluster scope
 # kubectl auth can-i create deployments
