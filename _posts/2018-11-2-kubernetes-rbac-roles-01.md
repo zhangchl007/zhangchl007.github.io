@@ -41,11 +41,12 @@ edit-role   1d
 
 ```
 
- A ClusterRole can be used to grant the same permissions as a Role, but because they are cluster-scoped, they can also be used to grant access to:
+A ClusterRole can be used to grant the same permissions as a Role, but because they are cluster-scoped, they can also be used to grant access to:
 
     * cluster-scoped resources (like nodes)
     * non-resource endpoints (like “/healthz”)
     * namespaced resources (like pods) across all namespaces (needed to run kubectl get pods --all-namespaces, for example)
+
 ```
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -58,6 +59,7 @@ rules:
   verbs: ["get", "watch", "list"] 
    
 ```    
+
 + 2 RoleBinding and ClusterRoleBinding
 
 A role binding grants the permissions defined in a role to a user or set of users. It holds a list of subjects (users, groups, or service accounts)
@@ -79,6 +81,7 @@ roleRef:
   apiGroup: ""
 
 ```
+
 A RoleBinding may also reference a ClusterRole to grant the permissions to namespaced resources defined in the ClusterRole within the RoleBinding’s namespace
 
 ```
@@ -98,6 +101,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ```
+
 A ClusterRoleBinding may be used to grant permission at the cluster level and in all namespaces. The following ClusterRoleBinding allows any user in the group “manager” to read secrets in any namespace
 
 ```
@@ -134,6 +138,7 @@ rules:
   verbs: ["update", "get"]
 
 ```
+
 Referring to Subjects: RoleBinding or ClusterRoleBinding binds a role to subjects. Subjects can be groups, users or service accounts.
 
 ```
@@ -285,6 +290,7 @@ system:volume-scheduler                                                83d
 view                                                    
 
 ```
+
 User-facing Roles
 
 The roles intended to be granted within particular namespaces using RoleBindings (admin, edit, view)
@@ -325,6 +331,7 @@ Getting CA Private Key
 # kubectl create -f test-rolebinding.yaml
 
 ```
+
 + 7 test user permission verification
 
 ```
@@ -379,6 +386,7 @@ CURRENT   NAME           CLUSTER      AUTHINFO   NAMESPACE
 *         test-context   kubernetes   test       test
 
 ```
+
 + 8 Reference 
 
 <a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Using RBAC Authorization</a>
