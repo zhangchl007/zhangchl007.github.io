@@ -5,7 +5,7 @@ tag: Openshift
 ---
 
 
-*  The bigger Openshift cluster,In case , Customer want to seperate the traffic between critical and generate bussiness, The   router sharding would be a good way, Openshift router can choose the specifed node to support the different env, which      also can link the service in the specifed project.
+*  The bigger Openshift cluster,In case , Customer want to seperate the traffic between critical and generate bussiness, The router sharding would be a good way, Openshift routers can run on the specifed nodes to support the app from the different env by namespace label
  
 
 + 1  solution Design 
@@ -40,7 +40,7 @@ router-2-f6s9l             1/1       Running   2          6h
 $ oc set env dc/router NAMESPACE_LABELS="router=prod"
 
 ```
-+ 4 Delopy the router for dev env in the same infra nodes,the ports will be changed as 10080/10443/11936
++ 4 Delopy the router for dev env in the same infra nodes,the ports will be changed as 10080/10443/11936 ,If an administrator wants to restrict all routes to a specific routing subdomain, they can pass the --force-subdomain option to the oc adm router command:$ oc adm router --force-subdomain='${name}-${namespace}.apps.example.com'. Here we don't want specific routing subdomain.
 
 ```
 $ oc adm router router-dev --replicas=0 --selector='node-role.kubernetes.io/infra=true' \
@@ -161,7 +161,7 @@ $ oc new-project app-dev
 $ oc label namespace app-dev  "router=dev"
 
 ```
-+ 9 Deploy app in prod and dev env .
++ 9 Deploy app in prod and dev env .If an administrator wants to restrict all routes to a specific routing subdomain, they can pass the --force-subdomain option to the oc adm router command:
 
 ```
 $ oc new-app --name prod-nodejs https://github.com/zhangchl007/nodejs-demo --hostname=prod-nodejs-app-prod.apps.zhangchl008.example.com
@@ -178,4 +178,9 @@ $ oc new-app --name dev-nodejs https://github.com/zhangchl007/nodejs-demo --host
 * http://prod-nodejs-app-prod.apps.zhangchl008.example.com
   
   ![router-prod](https://raw.githubusercontent.com/zhangchl007/zhangchl007.github.io/master/_image/router-prod.png)
+  
+* Reference:
+ <a href="https://docs.openshift.com/container-platform/3.9/install_config/router/default_haproxy_router.html">Openshift Router</a>
+ 
+ <a href="https://containers.ninja/openshift/loadbalancing/haproxy/sharding/2018/04/11/openshift-prod-dev-router-sharding.html">Openshift Router Sharding for Production and Development traffic</a>
 
