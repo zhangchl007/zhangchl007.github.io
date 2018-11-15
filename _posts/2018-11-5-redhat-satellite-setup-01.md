@@ -1,3 +1,9 @@
+---
+layout: post
+title: Satellite Installation part1
+tag: Linux
+---
+
 #  Satellite Installation
 
 + 1. Subscribed Red hat Channel for installation 
