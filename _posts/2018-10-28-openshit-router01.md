@@ -160,6 +160,9 @@ $ oc label namespace app-prod  "router=prod"
 $ oc new-project app-dev
 $ oc label namespace app-dev  "router=dev"
 
+#add project label for openshift infra projects
+for i in `oc get projects --show-labels|awk '{if($1~/openshift/ || $1~/kube/ || $1 ~/management/) print $1}'`;do oc label namespace $i "router=prod" ;done
+
 ```
 + 9 Deploy app in prod and dev env .If an administrator wants to restrict all routes to a specific routing subdomain, they can pass the --force-subdomain option to the oc adm router command:
 
