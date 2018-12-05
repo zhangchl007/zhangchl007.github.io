@@ -4,9 +4,12 @@ title: Openshift Internal Docker Registry Images Migration
 tag: Openshift
 ---
 
-In case ,you need to do images migration ,
+
++ 1 In case, you do ocp internal docker images migration 
 
 ```
+# cat img-migration.py
+
 #!/usr/bin/python
 #coding=utf-8
 from multiprocessing import Process,Pool
@@ -60,3 +63,4 @@ if __name__ =='__main__': #执行主进程
         sys.exit(0)
 
 ```
+
