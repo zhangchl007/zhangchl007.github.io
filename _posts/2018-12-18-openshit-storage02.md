@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Ceph radosgw Deployment with https
+title: Ceph radosgw Deployment with tsl/ssl
 tag: Openshift
 ---
 
