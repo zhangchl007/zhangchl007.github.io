@@ -4,7 +4,7 @@ title: Thanos-query testing for the different openshift-clusters
 tag: Openshift
 ---
 
-# It's very interesting, we had deployed Prometheus + Thanos in one Openshift Cluster this week, Now I will perform a testing crossing over the different Openshift cluster next week, So I just performed a testing with Native Docker Container ,which definitely works, take a note below :)
+# It's very interesting, we had deployed Prometheus + Thanos in one Openshift Cluster this week, Now I will perform a testing crossing over the different Openshift clusters next week, So I just performed a testing with Native Docker Container ,which definitely works, take a note below :)
 
 + 1 Setup a Standlone Prometheus with Docker 
 
@@ -31,34 +31,53 @@ rule_files:
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
+    scrape_interval: 5s
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['127.0.0.1:9090']
+  - job_name: 'node'
+    scrape_interval: 8s
+    static_configs:
+      - targets: ['127.0.0.1:9100']
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['127.0.0.1:8080']
 EOF
 
-# docker run -u root -p 9090:9090 -d  --name=prometheus-server --privileged=true \
+# docker run -u root -d  --name=prometheus-server --privileged=true \
    -v /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
    -v /data:/prometheus \
+   --net="host" \
    prom/prometheus:v2.4.3 \
    --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus
-
 ```
 
 + 2 Docker RUN Prometheus Node Exporter
 
 ```
-# docker run -d -p 9100:9100 \
-  --name=node-exporter \
+
+# docker run -d \
   --net="host" \
   --pid="host" \
+  --name="unify01" \
   -v "/:/host:ro,rslave" \
   quay.io/prometheus/node-exporter \
   --path.rootfs /host
+
+安装 cadvisor
+
+# docker run \
+  --net="host" \
+  --volume=/cgroup:/cgroup:ro \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:ro \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --volume=/dev/disk/:/dev/disk:ro \
+  --publish=8080:8080 \
+  --detach=true \
+  --name=cadvisor \
+  google/cadvisor:latest
 
 ```
 
@@ -94,7 +113,7 @@ EOF
 + 4 Setup Thanos sidecar and store with Docker
 
 ```
-Thanos sidecar
+Thanos sidecar(It will not work ,docker-compose is required)
 
 # docker run -d -p 11900:10900 \
 -p 11901:10901 \
