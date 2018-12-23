@@ -167,7 +167,7 @@ store \
 # oc logs -f thanos-query-757c69fb46-vln2d -c thanos-query
 
 ```
-level=info ts=2018-12-22T04:01:50.220277408Z caller=flags.go:90 msg="StoreAPI address that will be propagated through gossip" address=10.130.2.108:10901
+>level=info ts=2018-12-22T04:01:50.220277408Z caller=flags.go:90 msg="StoreAPI address that will be propagated through gossip" address=10.130.2.108:10901
 level=info ts=2018-12-22T04:01:50.238563658Z caller=flags.go:105 msg="QueryAPI address that will be propagated through gossip" address=10.130.2.108:10902
 level=debug ts=2018-12-22T04:01:50.247477196Z caller=cluster.go:158 component=cluster msg="resolved peers to following addresses" peers=
 level=info ts=2018-12-22T04:01:50.249844199Z caller=main.go:256 component=query msg="disabled TLS, key and cert must be set to enable"
