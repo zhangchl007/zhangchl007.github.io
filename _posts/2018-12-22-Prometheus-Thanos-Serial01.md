@@ -179,8 +179,8 @@ level=info ts=2018-12-22T04:01:50.260844122Z caller=query.go:405 msg="Listening 
 level=info ts=2018-12-22T04:01:50.260911116Z caller=query.go:428 component=query msg="Listening for StoreAPI gRPC" address=0.0.0.0:10901
 level=info ts=2018-12-22T04:01:55.273696884Z caller=storeset.go:227 component=storeset msg="adding new store to query storeset" address=thanos-sidecar:10901
 level=info ts=2018-12-22T04:01:55.273731284Z caller=storeset.go:227 component=storeset msg="adding new store to query storeset" address=thanos-store:10901
-level=info ts=2018-12-22T04:01:55.273742821Z caller=storeset.go:227 component=storeset msg="adding 
-+ <font color=#00ff size=5>new store to query storeset" address=192.168.0.71:10901</font>
++ level=info ts=2018-12-22T04:01:55.273742821Z caller=storeset.go:227 component=storeset msg="adding 
++ new store to query storeset" address=192.168.0.71:10901
 level=debug ts=2018-12-22T04:02:50.261035578Z caller=cluster.go:307 component=cluster msg="refresh cluster done" peers= resolvedPeers=
 
 ```
