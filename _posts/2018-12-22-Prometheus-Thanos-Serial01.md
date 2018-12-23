@@ -4,7 +4,7 @@ title: Thanos-query testing for the different openshift-clusters
 tag: Openshift
 ---
 
-# It's very interesting, we had deployed Prometheus + Thanos in one Openshift Cluster this week, Now I will perform a testing crossing over the different Openshift clusters next week, So I just performed a testing with Native Docker Container ,which definitely works, take a note below :)
+# It's very interesting, we had deployed Prometheus + Thanos in one Openshift Cluster this week, I will perform a testing crossing over the different Openshift cluster next week, So I just performed a testing with Native Docker Container ,which definitely works, take a note below :)
 
 + 1 Setup a Standlone Prometheus with Docker 
 
@@ -67,7 +67,6 @@ EOF
 安装 cadvisor
 
 # docker run \
-  --net="host" \
   --volume=/cgroup:/cgroup:ro \
   --volume=/:/rootfs:ro \
   --volume=/var/run:/var/run:ro \
@@ -113,7 +112,7 @@ EOF
 + 4 Setup Thanos sidecar and store with Docker
 
 ```
-Thanos sidecar(It will not work ,docker-compose is required)
+Thanos sidecar
 
 # docker run -d -p 11900:10900 \
 -p 11901:10901 \
@@ -166,6 +165,8 @@ store \
   - --store=192.168.0.71:10901
 # oc delete pod thanos-query-757c69fb46-482d8
 # oc logs -f thanos-query-757c69fb46-vln2d -c thanos-query
+
+```
 level=info ts=2018-12-22T04:01:50.220277408Z caller=flags.go:90 msg="StoreAPI address that will be propagated through gossip" address=10.130.2.108:10901
 level=info ts=2018-12-22T04:01:50.238563658Z caller=flags.go:105 msg="QueryAPI address that will be propagated through gossip" address=10.130.2.108:10902
 level=debug ts=2018-12-22T04:01:50.247477196Z caller=cluster.go:158 component=cluster msg="resolved peers to following addresses" peers=
@@ -177,7 +178,6 @@ level=info ts=2018-12-22T04:01:50.260844122Z caller=query.go:405 msg="Listening 
 level=info ts=2018-12-22T04:01:50.260911116Z caller=query.go:428 component=query msg="Listening for StoreAPI gRPC" address=0.0.0.0:10901
 level=info ts=2018-12-22T04:01:55.273696884Z caller=storeset.go:227 component=storeset msg="adding new store to query storeset" address=thanos-sidecar:10901
 level=info ts=2018-12-22T04:01:55.273731284Z caller=storeset.go:227 component=storeset msg="adding new store to query storeset" address=thanos-store:10901
-level=info ts=2018-12-22T04:01:55.273742821Z caller=storeset.go:227 component=storeset msg="adding new store to query storeset" address=192.168.0.71:10901
+level=info ts=2018-12-22T04:01:55.273742821Z caller=storeset.go:227 component=storeset msg="adding 
+<font color=#00ff size=5>new store to query storeset" address=192.168.0.71:10901</font>
 level=debug ts=2018-12-22T04:02:50.261035578Z caller=cluster.go:307 component=cluster msg="refresh cluster done" peers= resolvedPeers=
-
-```
