@@ -118,7 +118,7 @@ Thanos sidecar
 -p 11901:10901 \
 -p 11902:10902 \
 -v /etc/prometheus/s3.yml:/etc/prometheus/s3.yml \
--v /data:/prometheus \
+--volumes-from prometheus-server \
 --privileged=true \
 --name=thanos-sidecar \
 improbable/thanos:0.2.0 \
